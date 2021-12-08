@@ -1,5 +1,12 @@
 import type { NextPage } from "next";
+import {
+  useAuthUser,
+  withAuthUser,
+  withAuthUserTokenSSR,
+} from "next-firebase-auth";
+import Link from "next/link";
 const Home: NextPage = () => {
+  const AuthUser = useAuthUser();
   return (
     <div
       style={{
@@ -9,9 +16,28 @@ const Home: NextPage = () => {
         placeItems: "center",
       }}
     >
-      <h1>Carto-Nextjs</h1>
+      <div>
+        <h1>Carto-Nextjs</h1>
+        {AuthUser.email ? (
+          <div>
+            {" "}
+            <p>{AuthUser.email}</p>
+            <button
+              onClick={async () => {
+                await AuthUser.signOut();
+              }}
+            >
+              Signout
+            </button>
+          </div>
+        ) : (
+          <Link href="/login">Sign in</Link>
+        )}
+      </div>
     </div>
   );
 };
 
-export default Home;
+export const getServerSideProps = withAuthUserTokenSSR()();
+
+export default withAuthUser()(Home);
