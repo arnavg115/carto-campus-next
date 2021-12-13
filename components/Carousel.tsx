@@ -1,7 +1,9 @@
-import { Carousel, defaultProps } from "grommet";
+import { defaultProps } from "grommet";
+import { Carousel } from "react-responsive-carousel";
 import React from "react";
 import { Accessibility, Location, Organization } from "grommet-icons";
 import CarouselItem, { CarouselItemProps } from "./CarouselItem";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 import cartoSS from "../public/carto-ss.jpg";
 import fhsPool from "../public/fhspool.jpg";
 import avhsField from "../public/avhsfield.png";
@@ -33,7 +35,15 @@ const items: CarouselItemProps[] = [
 ];
 const CartoCarousel = () => {
   return (
-    <Carousel controls={false} play={6000}>
+    <Carousel
+      autoPlay
+      infiniteLoop
+      showArrows={false}
+      showStatus={false}
+      showThumbs={false}
+      showIndicators={false}
+      interval={6000}
+    >
       {items.map((item) => (
         <CarouselItem {...item} key={Math.random()} />
       ))}

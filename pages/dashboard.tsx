@@ -4,13 +4,14 @@ import {
   withAuthUser,
   withAuthUserTokenSSR,
 } from "next-firebase-auth";
+import { CartoPage } from "../components/CartoPage";
 
 const Demo = () => {
   const AuthUser = useAuthUser();
   return (
-    <div>
-      <p>Your email is {AuthUser.email ? AuthUser.email : "unknown"}.</p>
-    </div>
+    <CartoPage auth={AuthUser}>
+      <p>Hello</p>
+    </CartoPage>
   );
 };
 
