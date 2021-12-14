@@ -4,14 +4,12 @@ import React from "react";
 import { Accessibility, Location, Organization } from "grommet-icons";
 import CarouselItem, { CarouselItemProps } from "./CarouselItem";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import cartoSS from "../public/carto-ss.jpg";
-import fhsPool from "../public/fhspool.jpg";
-import avhsField from "../public/avhsfield.png";
+
 
 const items: CarouselItemProps[] = [
   {
     title: "Easy Usage",
-    src: fhsPool,
+    src: "./fhspool.jpg",
     text: `Our clear user interface allows for easy usage of the product.
         With just 2 clicks, users are able to access the platform and
         begin navigating.`,
@@ -20,14 +18,14 @@ const items: CarouselItemProps[] = [
   },
   {
     title: "Accurate Navigation",
-    src: cartoSS,
+    src: "./carto-ss.jpg",
     icon: <Location color="white" size="50px" />,
     text: `We utilize Mapbox for our navigation system. Mapbox provides us with detailed interactive maps and acurrate navigation.`,
     left: false,
   },
   {
     title: "School Compatibility",
-    src: avhsField,
+    src: "./avhsfield.png",
     icon: <Organization color="white" size="50px" />,
     left: true,
     text: `Currently, our product is limited to only Foothill High School, but we hope to expand in the future, and potentially map a majority of the schools in the district.`,
