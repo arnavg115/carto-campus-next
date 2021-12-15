@@ -10,11 +10,13 @@ import {
 } from "next-firebase-auth";
 import CardGrid from "../components/CardGrid";
 import { AboutCards } from "../lib/contents";
+import NotificationPanel from "../components/NotificationPanel";
 
 function About() {
   const Auth = useAuthUser();
   return (
     <div>
+      <NotificationPanel />
       <Navbar authenticated={!!Auth.email} />
       <Box background="#1c1c1c">
         <Box

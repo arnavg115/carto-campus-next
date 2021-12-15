@@ -12,3 +12,10 @@
   gap: 2rem;
   background-color: black;
 }
+
+.icons {
+  transition: all 0.2s ease-in-out;
+}
+.icons:hover {
+  transform: scale(1.3);
+}

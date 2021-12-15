@@ -12,6 +12,9 @@ import {
 import { SideBarTipProps } from "../components/SideBarTip";
 import { NextRouter } from "next/router";
 
+/**
+ * Hello
+ */
 export const HomeCards: CardsProps[] = [
   {
     title: "Fast",
