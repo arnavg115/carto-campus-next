@@ -10,7 +10,7 @@ import {
 } from "grommet-icons";
 
 export interface CarouselItemProps {
-  src: StaticImageData;
+  src: string;
   text: string;
   icon: JSX.Element;
   title: string;
@@ -32,7 +32,7 @@ const CarouselItem: FC<CarouselItemProps> = (props) => {
       }}
     >
       <Box direction="row" align="center" height="100%" width="100%">
-        <Image src={props.src.src} fit="cover" />
+        <Image src={props.src} fit="cover" />
       </Box>
       <Box alignContent="center">
         <Box align="center">

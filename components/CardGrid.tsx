@@ -17,7 +17,7 @@ const CardGrid: FC<CardGridProps> = (props) => {
       }}
     >
       {props.cards.map((card) => (
-        <Cards {...card} />
+        <Cards {...card} key={Math.random()}/>
       ))}
     </div>
   );
