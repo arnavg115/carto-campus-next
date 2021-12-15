@@ -1,43 +1,45 @@
 import firebase from "firebase";
+import { Button, TextInput } from "grommet";
 import { withAuthUser, AuthAction } from "next-firebase-auth";
 import Link from "next/link";
 import { useState } from "react";
-
-const MyLoader = () => <div>Loading...</div>;
+import { AuthBox } from "../components/AuthBox";
+import CartoLoader from "../components/CartoLoader";
+import NextLink from "../components/Link";
+import { PasswordInput } from "../components/PasswordInput";
+import { colors } from "../lib/Constants";
+import { useField } from "../lib/hooks";
 
 const LoginPage = () => {
-  const [Email, setEmail] = useState("");
-  const [Password, setPassword] = useState("");
-  const login = async () => {
-    await firebase.auth().signInWithEmailAndPassword(Email, Password);
+  const Login = async () => {
+    await firebase.auth().signInWithEmailAndPassword(email, password);
   };
+  const [email, setEmail] = useField("");
+  const [password, setPassword] = useField("");
 
   return (
-    <div>
-      <h1>Login</h1>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          login();
+    <AuthBox>
+      <h1 style={{ color: "white" }}>Login</h1>
+      <TextInput value={email} onChange={setEmail} placeholder="Email" />
+      <PasswordInput password={password} setPassword={setPassword} />
+      <Button
+        label="Login"
+        primary
+        color="brand"
+        onClick={async () => {
+          await Login();
         }}
-      >
-        <input
-          placeholder="email"
-          type="text"
-          value={Email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          placeholder="password"
-          type="password"
-          value={Password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit">Submit</button>
-      </form>
-
-      <Link href="/register">Register</Link>
-    </div>
+      />
+      <div>
+        <p>
+          Need an account? <NextLink href="/register" text="Register" /> instead
+          .
+        </p>
+        <p>
+          Forgot your password? <NextLink href="/forgot" text="Reset" /> it.
+        </p>
+      </div>
+    </AuthBox>
   );
 };
 
@@ -45,5 +47,5 @@ export default withAuthUser({
   whenAuthed: AuthAction.REDIRECT_TO_APP,
   whenUnauthedBeforeInit: AuthAction.SHOW_LOADER,
   whenUnauthedAfterInit: AuthAction.RENDER,
-  LoaderComponent: MyLoader,
+  LoaderComponent: CartoLoader,
 })(LoginPage);

@@ -1,46 +1,67 @@
 import firebase from "firebase";
+import { Button, TextInput } from "grommet";
 import { withAuthUser, AuthAction } from "next-firebase-auth";
-import Link from "next/link";
-import React, { useState } from "react";
+import React from "react";
+import { AuthBox } from "../components/AuthBox";
+import CartoLoader from "../components/CartoLoader";
+import NextLink from "../components/Link";
+import { PasswordInput } from "../components/PasswordInput";
+import { colors } from "../lib/Constants";
+import { useField } from "../lib/hooks";
 
-const MyLoader = () => <div>Loading...</div>;
+const RegisterPage = () => {
+  const [email, setEmail] = useField("");
+  const [password, setPassword] = useField("");
+  const [passwordConf, setPasswordConf] = useField("");
+  const Register = async () => {
+    const sub = email.split("@");
+    if (sub.length === 2) {
+      if (passwordConf !== password) {
+        console.log("Nomatch");
 
-const LoginPage = () => {
-  const [Email, setEmail] = useState("");
-  const [Password, setPassword] = useState("");
-  const login = async () => {
-    try {
-      await firebase.auth().createUserWithEmailAndPassword(Email, Password);
-    } catch (err: any) {
-      alert(err.code);
+        alert("Passwords do not match");
+      } else if (sub[1] === "pleasantonusd.net") {
+        try {
+          await firebase.auth().createUserWithEmailAndPassword(email, password);
+        } catch (err) {
+          const i: any = err;
+          alert(i.code.split("/")[1]);
+        }
+      } else {
+        alert("Email must be a pleasantonusd email.");
+      }
+    } else {
+      alert("Invalid email");
     }
   };
 
   return (
-    <div>
+    <AuthBox>
       <h1>Register</h1>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          login();
+      <TextInput value={email} onChange={setEmail} placeholder="Email" />
+      <PasswordInput
+        password={password}
+        setPassword={setPassword}
+        size={"small"}
+      />
+      <PasswordInput
+        password={passwordConf}
+        setPassword={setPasswordConf}
+        size={"small"}
+      />
+      <Button
+        label="Register"
+        primary
+        color="brand"
+        onClick={async () => {
+          await Register();
         }}
-      >
-        <input
-          placeholder="email"
-          type="text"
-          value={Email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          placeholder="password"
-          type="password"
-          value={Password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit">Submit</button>
-      </form>
-      <Link href="/login">Login</Link>
-    </div>
+      />
+      <p>
+        Already have an account? <NextLink href="/login" text="Login" />{" "}
+        instead.
+      </p>
+    </AuthBox>
   );
 };
 
@@ -48,5 +69,5 @@ export default withAuthUser({
   whenAuthed: AuthAction.REDIRECT_TO_APP,
   whenUnauthedBeforeInit: AuthAction.SHOW_LOADER,
   whenUnauthedAfterInit: AuthAction.RENDER,
-  LoaderComponent: MyLoader,
-})(LoginPage);
+  LoaderComponent: CartoLoader,
+})(RegisterPage);

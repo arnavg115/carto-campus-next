@@ -13,7 +13,7 @@ interface SideBarProps {
 
 const SideBar: FC<SideBarProps> = (props) => {
   const [view, setView] = useState(false);
-  const router = useRouter();
+  // const router = useRouter();
 
   if (!props.auth.email) {
     return (
@@ -85,7 +85,7 @@ const SideBar: FC<SideBarProps> = (props) => {
         <div
           style={{
             position: "absolute",
-            left: "100px",
+            left: "110px",
             bottom: "10px",
             padding: "10px",
             zIndex: 3,
@@ -108,7 +108,7 @@ const SideBar: FC<SideBarProps> = (props) => {
             color="red"
             onClick={async (e) => {
               await props.auth.signOut();
-              router.push("/");
+              // router.push("/");
             }}
           />
         </div>

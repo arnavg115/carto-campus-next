@@ -1,12 +1,13 @@
 import React from "react";
 import {
+  AuthAction,
   useAuthUser,
   withAuthUser,
   withAuthUserTokenSSR,
 } from "next-firebase-auth";
 import { CartoPage } from "../components/CartoPage";
 
-const Demo = () => {
+const DashboardPage = () => {
   const AuthUser = useAuthUser();
   return (
     <CartoPage auth={AuthUser}>
@@ -17,4 +18,6 @@ const Demo = () => {
 
 export const getServerSideProps = withAuthUserTokenSSR()();
 
-export default withAuthUser()(Demo);
+export default withAuthUser({
+  whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN,
+})(DashboardPage);

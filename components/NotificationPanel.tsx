@@ -4,21 +4,12 @@ import { useContext, useEffect, useState } from "react";
 import { Close } from "grommet-icons";
 
 function NotificationPanel() {
-  const size = useContext(ResponsiveContext);
   const [open, setOpen] = useState(true);
   useEffect(() => {
     const open = localStorage.getItem("open");
     setOpen(open !== "false");
   }, []);
-  if (size === "small") {
-    if (open) {
-      alert(
-        "Carto-Campus is in public beta. Please email us with any bugs or problems you find at contact.cartocampus@gmail.com"
-      );
-      localStorage.setItem("open", "false");
-    }
-    return null;
-  }
+
   if (!open) {
     return null;
   }
