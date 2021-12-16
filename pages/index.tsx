@@ -13,20 +13,18 @@ import SplashBox from "../components/SplashBox";
 import CartoCarousel from "../components/Carousel";
 import CardGrid from "../components/CardGrid";
 import { HomeCards } from "../lib/contents";
+import { CartoPage } from "../components/CartoPage";
 const Home: NextPage = () => {
   const Auth = useAuthUser();
 
   return (
-    <div>
-      <NotificationPanel />
-      <Navbar authenticated={!!Auth.email} />
+    <CartoPage auth={Auth} landing>
       <SplashBox />
       <Box background="#2b2b2b" pad="medium">
         <CartoCarousel />
       </Box>
       <CardGrid cards={HomeCards} />
-      <CartoFooter />
-    </div>
+    </CartoPage>
   );
 };
 

@@ -1,4 +1,5 @@
 import { CardsProps } from "../components/Cards";
+import { Accessibility, Location, Organization } from "grommet-icons";
 import {
   Deploy,
   FormLock,
@@ -11,6 +12,7 @@ import {
 } from "grommet-icons";
 import { SideBarTipProps } from "../components/SideBarTip";
 import { NextRouter } from "next/router";
+import { CarouselItemProps } from "../components/CarouselItem";
 
 /**
  * Hello
@@ -92,5 +94,31 @@ export const authSideBar: SideBarTipProps[] = [
     callback: (router: NextRouter) => {
       router.push("/settings");
     },
+  },
+];
+
+export const CarouselItems: CarouselItemProps[] = [
+  {
+    title: "Easy Usage",
+    src: "./fhspool.jpg",
+    text: `Our clear user interface allows for easy usage of the product.
+        With just 2 clicks, users are able to access the platform and
+        begin navigating.`,
+    icon: <Accessibility color="white" size="50px" />,
+    left: true,
+  },
+  {
+    title: "Accurate Navigation",
+    src: "./carto-ss.jpg",
+    icon: <Location color="white" size="50px" />,
+    text: `We utilize Mapbox for our navigation system. Mapbox provides us with detailed interactive maps and acurrate navigation.`,
+    left: false,
+  },
+  {
+    title: "School Compatibility",
+    src: "./avhsfield.png",
+    icon: <Organization color="white" size="50px" />,
+    left: true,
+    text: `Currently, our product is limited to only Foothill High School, but we hope to expand in the future, and potentially map a majority of the schools in the district.`,
   },
 ];

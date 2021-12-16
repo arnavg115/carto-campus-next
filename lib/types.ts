@@ -1,4 +1,5 @@
 // import mapboxgl from "mapbox-gl";
+import { AuthUserContext } from "next-firebase-auth";
 import React from "react";
 
 export interface PassWordInputProps {
@@ -45,6 +46,7 @@ export interface getUserPrefReturn {
 
 export interface NonMapHeaderProps {
   title: string;
+  auth: AuthUserContext;
 }
 
 export interface school {

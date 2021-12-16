@@ -1,13 +1,5 @@
 import { Box, Heading, Image } from "grommet";
 import { FC } from "react";
-import {
-  FormLock,
-  Deploy,
-  Trigger,
-  Accessibility,
-  Location,
-  Organization,
-} from "grommet-icons";
 
 export interface CarouselItemProps {
   src: string;
@@ -18,7 +10,6 @@ export interface CarouselItemProps {
 }
 
 const CarouselItem: FC<CarouselItemProps> = (props) => {
-  console.log(props.src);
   return (
     <div
       style={{
@@ -32,7 +23,7 @@ const CarouselItem: FC<CarouselItemProps> = (props) => {
       }}
     >
       <Box direction="row" align="center" height="100%" width="100%">
-        <Image src={props.src} fit="cover" />
+        <Image src={props.src} fit="cover" alt="" />
       </Box>
       <Box alignContent="center">
         <Box align="center">

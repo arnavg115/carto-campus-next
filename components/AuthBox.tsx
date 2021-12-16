@@ -1,6 +1,7 @@
 import { Box } from "grommet";
 import { colors } from "../lib/Constants";
 import { FC } from "react";
+import HeadComponent from "./Head";
 
 export const AuthBox: FC = ({ children }) => {
   return (
@@ -11,6 +12,7 @@ export const AuthBox: FC = ({ children }) => {
       style={{ height: "100vh" }}
       background="black"
     >
+      <HeadComponent />
       <Box
         direction="column"
         pad="small"
