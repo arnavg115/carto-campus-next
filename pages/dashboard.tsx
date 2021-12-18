@@ -1,5 +1,3 @@
-// @ts-ignore
-import MapboxDirections from "@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions";
 import React, { useEffect, useRef, useState } from "react";
 import "mapbox-gl/dist/mapbox-gl.css";
 import mapboxgl from "mapbox-gl";
@@ -15,6 +13,7 @@ import MapInput from "../components/MapInput";
 import { RoomType } from "../lib/barrel";
 import { server } from "../lib/config";
 
+// @ts-ignore
 const DashboardPage: NextPage = ({ init }) => {
   const Auth = useAuthUser();
   mapboxgl.accessToken =
