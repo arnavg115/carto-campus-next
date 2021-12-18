@@ -6,9 +6,6 @@ import {
 } from "next-firebase-auth";
 import { Box } from "grommet";
 
-import Navbar from "../components/NavBar";
-import CartoFooter from "../components/CartoFooter";
-import NotificationPanel from "../components/NotificationPanel";
 import SplashBox from "../components/SplashBox";
 import CartoCarousel from "../components/Carousel";
 import CardGrid from "../components/CardGrid";

@@ -5,13 +5,13 @@ const HeadComponent = () => {
   return (
     <Head>
       <meta charSet="utf-8" />
-      <link rel="icon" href="/carto-campus-dark.ico" />
+      <link rel="icon" href="./carto-campus-dark.ico" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <meta name="theme-color" content="#000000" />
       <meta name="description" content="Going the Extra Mile" />
-      <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+      {/* <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" /> */}
 
-      <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+      {/* <link rel="manifest" href="%PUBLIC_URL%/manifest.json" /> */}
 
       <title>Carto-Campus</title>
       <meta name="title" content="Carto-Campus" />

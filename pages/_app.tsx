@@ -1,6 +1,7 @@
 import { grommet, Grommet, ThemeType } from "grommet";
 import { deepMerge } from "grommet/utils";
 import type { AppProps } from "next/app";
+import HeadComponent from "../components/Head";
 import initAuth from "../lib/initFirebase";
 import "../styles/globals.css";
 
@@ -17,6 +18,7 @@ const customTheme = deepMerge(grommet, {
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <Grommet theme={customTheme}>
+      <HeadComponent />
       <Component {...pageProps} />
     </Grommet>
   );

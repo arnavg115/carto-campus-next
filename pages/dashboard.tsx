@@ -12,8 +12,10 @@ import {
 import { CartoPage } from "../components/CartoPage";
 import { NextPage } from "next";
 import MapInput from "../components/MapInput";
+import { RoomType } from "../lib/barrel";
+import { server } from "../lib/config";
 
-const DashboardPage: NextPage = () => {
+const DashboardPage: NextPage = ({ init }) => {
   const Auth = useAuthUser();
   mapboxgl.accessToken =
     "pk.eyJ1IjoiZ2FybmF2YXVyaGEiLCJhIjoiY2tjZ3RiczFuMGFwMjJ5bGluOXN3YTdhaiJ9.WUkX31Fd9g1c9YQwFujJIA";
@@ -21,6 +23,7 @@ const DashboardPage: NextPage = () => {
   const map = useRef<null | mapboxgl.Map>(null);
 
   useEffect(() => {
+    console.log(init);
     initState();
   }, []);
   async function initState() {
@@ -36,13 +39,26 @@ const DashboardPage: NextPage = () => {
 
   return (
     <CartoPage auth={Auth} landing={false}>
-      <MapInput map={map} />
+      <MapInput map={map} initSuggestion={init} />
       <div ref={mapContainer} style={{ height: "100%", width: "100%" }}></div>
     </CartoPage>
   );
 };
 
-export const getServerSideProps = withAuthUserTokenSSR()();
+export const getServerSideProps = withAuthUserTokenSSR()(
+  async ({ AuthUser }) => {
+    const response = await fetch(
+      `${server}/api/init?id=61a83693444ddc3829a46f3a`
+    );
+    console.log(response.status);
+    const data = (await response.json()).data as RoomType[];
+    return {
+      props: {
+        init: data,
+      },
+    };
+  }
+);
 
 export default withAuthUser({
   whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN,
