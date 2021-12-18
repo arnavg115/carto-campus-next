@@ -1,3 +1,4 @@
+import firestore from "firebase";
 import { Box, Button, ResponsiveContext } from "grommet";
 import {
   AuthAction,
@@ -30,9 +31,14 @@ function Verify() {
   }, []);
 
   const sendEmail = async () => {
-    setSent(true);
-    alert("sent");
-    localStorage.setItem("sent", "true");
+    try {
+      await firestore.auth().currentUser!.sendEmailVerification();
+      setSent(true);
+      alert("sent");
+      localStorage.setItem("sent", "true");
+    } catch (e) {
+      alert(e);
+    }
   };
   return (
     <NonMapPage title="Verify" auth={Auth}>

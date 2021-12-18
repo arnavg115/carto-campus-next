@@ -11,6 +11,7 @@ import CartoCarousel from "../components/Carousel";
 import CardGrid from "../components/CardGrid";
 import { HomeCards } from "../lib/contents";
 import { CartoPage } from "../components/CartoPage";
+
 const Home: NextPage = () => {
   const Auth = useAuthUser();
 

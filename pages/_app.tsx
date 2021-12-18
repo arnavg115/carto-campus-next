@@ -1,4 +1,6 @@
+import { ApolloProvider } from "@apollo/client";
 import { grommet, Grommet, ThemeType } from "grommet";
+import { useApollo } from "../lib/apollo";
 import { deepMerge } from "grommet/utils";
 import type { AppProps } from "next/app";
 import HeadComponent from "../components/Head";
@@ -16,11 +18,14 @@ const customTheme = deepMerge(grommet, {
 } as ThemeType);
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const client = useApollo(pageProps.initialApolloState);
   return (
-    <Grommet theme={customTheme}>
-      <HeadComponent />
-      <Component {...pageProps} />
-    </Grommet>
+    <ApolloProvider client={client}>
+      <Grommet theme={customTheme}>
+        <HeadComponent />
+        <Component {...pageProps} />
+      </Grommet>
+    </ApolloProvider>
   );
 }
 
