@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import "mapbox-gl/dist/mapbox-gl.css";
 import mapboxgl from "mapbox-gl";
 import {
@@ -8,21 +8,26 @@ import {
   withAuthUserTokenSSR,
 } from "next-firebase-auth";
 import { CartoPage } from "../components/CartoPage";
+import { NonMapPage } from "../components/NonMapPage";
 import { NextPage } from "next";
 import MapInput from "../components/MapInput";
 import { RoomType } from "../lib/barrel";
 import { server } from "../lib/config";
+import { useRouter } from "next/router";
+import { Button } from "grommet";
 
 // @ts-ignore
 const DashboardPage: NextPage = ({ init }) => {
   const Auth = useAuthUser();
-  mapboxgl.accessToken =
-    "pk.eyJ1IjoiZ2FybmF2YXVyaGEiLCJhIjoiY2tjZ3RiczFuMGFwMjJ5bGluOXN3YTdhaiJ9.WUkX31Fd9g1c9YQwFujJIA";
+  mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX!;
+
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const map = useRef<null | mapboxgl.Map>(null);
-
+  const router = useRouter();
   useEffect(() => {
-    console.log(init);
+    if (!Auth.emailVerified) {
+      router.push("/verify");
+    }
     initState();
   }, []);
   async function initState() {
@@ -46,10 +51,24 @@ const DashboardPage: NextPage = ({ init }) => {
 
 export const getServerSideProps = withAuthUserTokenSSR()(
   async ({ AuthUser }) => {
+    if (!AuthUser.emailVerified) {
+      return {
+        props: {
+          init: [],
+        },
+      };
+    }
+    const token = await AuthUser.getIdToken();
+    if (!token) return { props: { init: [] } };
     const response = await fetch(
-      `${server}/api/init?id=61a83693444ddc3829a46f3a`
+      `${server}/api/init?id=61a83693444ddc3829a46f3a`,
+      {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      }
     );
-    console.log(response.status);
+    // console.log(response.status);
     const data = (await response.json()).data as RoomType[];
     return {
       props: {

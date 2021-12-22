@@ -1,8 +1,11 @@
 import { NextApiHandler } from "next";
 import mongoose from "mongoose";
 import { utils } from "../../lib/barrel";
+import initAuth from "../../lib/initFirebase";
+import { verifyIdToken } from "next-firebase-auth";
 
 mongoose.connect(process.env.MONGO!);
+initAuth();
 
 const handler: NextApiHandler = async (req, res) => {
   const { id } = req.query as { id: string };

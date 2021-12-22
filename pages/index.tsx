@@ -11,6 +11,14 @@ import CartoCarousel from "../components/Carousel";
 import CardGrid from "../components/CardGrid";
 import { HomeCards } from "../lib/contents";
 import { CartoPage } from "../components/CartoPage";
+import { gql } from "@apollo/client";
+import { initializeApollo } from "../lib/apollo";
+
+const query = gql`
+  query {
+    hello
+  }
+`;
 
 const Home: NextPage = () => {
   const Auth = useAuthUser();
@@ -26,6 +34,25 @@ const Home: NextPage = () => {
   );
 };
 
-export const getServerSideProps = withAuthUserTokenSSR()();
+export const getServerSideProps = withAuthUserTokenSSR()(
+  async ({ AuthUser }) => {
+    const token = await AuthUser.getIdToken()!;
+    const client = initializeApollo();
+    const { data } = await client.query({
+      query,
+      context: {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      },
+    });
+
+    return {
+      props: {
+        init: data.hello,
+      },
+    };
+  }
+);
 
 export default withAuthUser()(Home);

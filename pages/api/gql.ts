@@ -2,6 +2,8 @@ import { ApolloServer } from "apollo-server-micro";
 import { NextApiRequest, NextApiResponse } from "next";
 import mongoose from "mongoose";
 import { School, typeDefs, utils } from "../../lib/barrel";
+import initAuth from "../../lib/initFirebase";
+import { verifyIdToken } from "next-firebase-auth";
 
 mongoose.connect(process.env.MONGO!);
 
@@ -31,9 +33,13 @@ const resolvers = {
   },
 };
 
-const server = new ApolloServer({ typeDefs, resolvers: resolvers });
+const server = new ApolloServer({
+  typeDefs,
+  resolvers: resolvers,
+  context: ({ req, res }) => ({ req, res }),
+});
 const startServer = server.start();
-
+initAuth();
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
