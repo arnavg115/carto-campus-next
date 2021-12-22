@@ -207,7 +207,7 @@ const DashboardPage: NextPage = ({ init }) => {
             }}
           >
             {dir.legs[0].steps.map((x: any) => {
-              return <p>{x.maneuver.instruction}</p>;
+              return <p key={Math.random()}>{x.maneuver.instruction}</p>;
             })}
           </Collapsible>
         </div>
