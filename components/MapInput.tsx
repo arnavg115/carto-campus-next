@@ -5,14 +5,22 @@ import { Button, TextInput } from "grommet";
 import { Refresh, Launch } from "grommet-icons";
 
 import { RoomType } from "../lib/barrel";
-import { get, getRoute, midpoint, search } from "../lib/clientUtils";
+
 import mapboxgl from "mapbox-gl";
+import { search } from "../lib/clientUtils";
 interface MapInputProps {
   map: React.MutableRefObject<mapboxgl.Map | null>;
   initSuggestion: RoomType[];
+  nav: (origin: string, dest: string, reset: (fly: boolean) => void) => void;
+  resetDashboard: () => void;
 }
 
-const MapInput: FC<MapInputProps> = ({ initSuggestion, map }) => {
+const MapInput: FC<MapInputProps> = ({
+  initSuggestion,
+  map,
+  nav,
+  resetDashboard,
+}) => {
   const [origin, setOrigin] = useState("");
   const [dest, setDest] = useState("");
   const [orS, setORS] = useState<RoomType[]>(initSuggestion);
@@ -28,7 +36,7 @@ const MapInput: FC<MapInputProps> = ({ initSuggestion, map }) => {
     removeLayer("route");
     removeLayer("start");
     removeLayer("end");
-
+    resetDashboard();
     if (fly) {
       map.current!.flyTo({
         center: [-121.917294, 37.672366],
@@ -41,99 +49,7 @@ const MapInput: FC<MapInputProps> = ({ initSuggestion, map }) => {
       setORS([]);
     }
   };
-  const nav = async () => {
-    reset(false);
-    if (origin === "" || dest === "") {
-      alert("Please enter origin and destination");
-      return;
-    }
-    const or = await get("61a83693444ddc3829a46f3a", origin);
-    const dst = await get("61a83693444ddc3829a46f3a", dest);
-    map.current!.addLayer({
-      id: "start",
-      type: "circle",
-      source: {
-        type: "geojson",
-        data: {
-          type: "FeatureCollection",
-          features: [
-            {
-              type: "Feature",
-              properties: {},
-              geometry: {
-                type: "Point",
-                coordinates: or.coord,
-              },
-            },
-          ],
-        },
-      },
-      paint: {
-        "circle-radius": 10,
-        "circle-color": "red",
-      },
-    });
-    map.current!.addLayer({
-      id: "end",
-      type: "circle",
-      source: {
-        type: "geojson",
-        data: {
-          type: "FeatureCollection",
-          features: [
-            {
-              type: "Feature",
-              properties: {},
-              geometry: {
-                type: "Point",
-                coordinates: dst.coord,
-              },
-            },
-          ],
-        },
-      },
-      paint: {
-        "circle-radius": 10,
-        "circle-color": "black",
-      },
-    });
 
-    // console.log(or);
-
-    const res = await getRoute(or.coord, dst.coord);
-    const route = res.geometry.coordinates;
-
-    const geojsn: any = {
-      type: "Feature",
-      properties: {},
-      geometry: {
-        type: "LineString",
-        coordinates: route,
-      },
-    };
-    map.current!.flyTo({
-      center: midpoint(or.coord, dst.coord),
-      zoom: 18,
-    });
-    // console.log(res);
-    map.current!.addLayer({
-      id: "route",
-      type: "line",
-      source: {
-        type: "geojson",
-        data: geojsn,
-      },
-      layout: {
-        "line-join": "round",
-        "line-cap": "round",
-      },
-      paint: {
-        "line-color": "#3887be",
-        "line-width": 5,
-        "line-opacity": 0.75,
-      },
-    });
-  };
   return (
     <div className={styles.inptbox}>
       <TextInput
@@ -176,7 +92,12 @@ const MapInput: FC<MapInputProps> = ({ initSuggestion, map }) => {
         }}
         value={dest}
       />
-      <Button icon={<Launch />} primary color={"black"} onClick={() => nav()} />
+      <Button
+        icon={<Launch />}
+        primary
+        color={"black"}
+        onClick={() => nav(origin, dest, reset)}
+      />
     </div>
   );
 };
