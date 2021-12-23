@@ -13,7 +13,7 @@ import { useRouter } from "next/router";
 import { FC, useContext, useState } from "react";
 import { FormDown } from "grommet-icons";
 import Divider from "./Divider";
-import styles from "../styles/Home.module.css"
+
 interface NavBarProps {
   authenticated: boolean;
 }
@@ -34,11 +34,13 @@ const Navbar: FC<NavBarProps> = ({ authenticated }) => {
             />
             <Anchor size="medium" href="/" color="white" label="Carto-Campus" />
           </Box>
-          <Button icon={<FormDown />} onClick={() => setOpen(!open)} style={{
-            transform: !open ? "rotate(0deg)" : "rotate(180deg)",
-            tarnsition: "all 0.2s ease-in-out"
-          }}
-            className={styles.carrot}
+          <Button
+            icon={<FormDown />}
+            onClick={() => setOpen(!open)}
+            style={{
+              transform: !open ? "rotate(0deg)" : "rotate(180deg)",
+              transition: "all 0.2s ease-in-out",
+            }}
           />
         </Header>
         <Collapsible open={open}>
