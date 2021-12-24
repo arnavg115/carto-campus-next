@@ -14,7 +14,7 @@ import { NonMapPage } from "../components/NonMapPage";
 import { gql } from "@apollo/client";
 import { Box, Button, Select } from "grommet";
 
-const settings = (props: any) => {
+const Settings = (props: any) => {
   const auth = useAuthUser();
   useEffect(() => {
     console.log(props);
@@ -159,4 +159,4 @@ export const getServerSideProps = withAuthUserTokenSSR()(
 
 export default withAuthUser({
   whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN,
-})(settings);
+})(Settings);

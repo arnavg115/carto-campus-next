@@ -36,7 +36,6 @@ const DashboardPage: NextPage = ({ init, prefs }) => {
     if (!Auth.emailVerified) {
       router.push("/verify");
     }
-    console.log(prefs);
     initState();
   }, []);
   const nav = async (
