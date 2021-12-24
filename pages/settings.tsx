@@ -7,13 +7,12 @@ import {
   withAuthUserTokenSSR,
 } from "next-firebase-auth";
 import { Down } from "grommet-icons";
-
 import { initializeApollo } from "../lib/apollo";
 import React, { useEffect, useState } from "react";
 import NextLink from "../components/Link";
 import { NonMapPage } from "../components/NonMapPage";
 import { gql } from "@apollo/client";
-import { Select } from "grommet";
+import { Box, Button, Select } from "grommet";
 
 const settings = (props: any) => {
   const auth = useAuthUser();
@@ -21,7 +20,33 @@ const settings = (props: any) => {
     console.log(props);
   }, []);
   const [units, setUnits] = useState(props.prefs.units as string);
-  const [school, setSchool] = useState(props.school as string);
+  const [school, setSchool] = useState(
+    `${props.school.name}:${props.school.zip}`
+  );
+  const save = async () => {
+    const zip = parseInt(school.split(":")[1]);
+    const name = school.split(":")[0];
+    const query = gql`
+      query Query($name: String!, $zip: Int!) {
+        getSchoolByName(name: $name, zip: $zip) {
+          _id
+        }
+      }
+    `;
+    const client = initializeApollo();
+    const { data } = await client.query({
+      query,
+      variables: {
+        name,
+        zip,
+      },
+    });
+
+    await firebase.firestore().collection("users").doc(auth.id!).set({
+      units,
+      school: data.getSchoolByName._id,
+    });
+  };
   if (!auth.emailVerified) {
     return (
       <NonMapPage auth={auth} title="Verify">
@@ -30,27 +55,42 @@ const settings = (props: any) => {
       </NonMapPage>
     );
   }
+
   return (
     <NonMapPage auth={auth} title="Settings">
-      <h2 style={{ margin: "0px" }}>Units</h2>
-      <Select
-        value={units}
-        options={["imperial", "metric"]}
-        onChange={({ option }) => {
-          setUnits(option);
-        }}
-        icon={<Down size="small" />}
-      />
-      <h2>School</h2>
-      <Select
-        value={school}
-        // options={["University of Waterloo", "University of Toronto"]}
-        options={props.schools.map((s: any) => s.name)}
-        onChange={({ option }) => {
-          setSchool(option);
-        }}
-        icon={<Down size="small" />}
-      />
+      <Box gap="small" margin={{ top: "30px" }}>
+        <h2 style={{ margin: "0px" }}>Units</h2>
+        <Select
+          value={units.charAt(0).toUpperCase() + units.slice(1)}
+          options={["Imperial", "Metric"]}
+          onChange={({ option }: { option: string }) => {
+            setUnits(option.toLowerCase());
+          }}
+          icon={<Down size="small" />}
+        />
+        <h2>School</h2>
+        <Select
+          value={school}
+          options={props.schools.map((s: any) => `${s.name}:${s.zip}`)}
+          onChange={({ option }) => {
+            setSchool(option);
+          }}
+          icon={<Down size="small" />}
+        />
+        <Box width="100%" align="center">
+          <Button
+            label="save"
+            color="black"
+            style={{
+              width: "100px",
+            }}
+            primary
+            onClick={() => {
+              save();
+            }}
+          />
+        </Box>
+      </Box>
     </NonMapPage>
   );
 };
@@ -60,6 +100,7 @@ export const getServerSideProps = withAuthUserTokenSSR()(
     const query = gql`
       query Query {
         getSchools {
+          zip
           name
           _id
         }
@@ -69,6 +110,7 @@ export const getServerSideProps = withAuthUserTokenSSR()(
     const schoolQuery = gql`
       query Query($id: String!) {
         getSchool(id: $id) {
+          zip
           name
         }
       }
@@ -106,7 +148,7 @@ export const getServerSideProps = withAuthUserTokenSSR()(
           props: {
             prefs: user.data(),
             schools: data.getSchools,
-            school: res.data.getSchool.name,
+            school: res.data.getSchool,
           },
         };
       }

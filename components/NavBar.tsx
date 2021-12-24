@@ -13,12 +13,14 @@ import { useRouter } from "next/router";
 import { FC, useContext, useState } from "react";
 import { FormDown } from "grommet-icons";
 import Divider from "./Divider";
+import { AuthUserContext } from "next-firebase-auth";
 
 interface NavBarProps {
   authenticated: boolean;
+  auth: AuthUserContext;
 }
 
-const Navbar: FC<NavBarProps> = ({ authenticated }) => {
+const Navbar: FC<NavBarProps> = ({ authenticated, auth }) => {
   const [open, setOpen] = useState(false);
   const size = useContext(ResponsiveContext);
   if (size === "small") {
@@ -43,42 +45,50 @@ const Navbar: FC<NavBarProps> = ({ authenticated }) => {
             }}
           />
         </Header>
-        <Collapsible open={open}>
-          <Box
-            background="black"
-            align="center"
-            justify="center"
-            gap="small"
-            pad={{ top: "medium", bottom: "medium" }}
-            border={{ side: "bottom", color: "dark-1" }}
-          >
-            <Anchor size="medium" href="/" color="white" label="Home" />
-            <Divider />
-            <Anchor size="medium" href="/about" color="white" label="About" />
-            <Divider />
+        <div style={{ backgroundColor: "black" }}>
+          <Collapsible open={open}>
+            <Box
+              background="black"
+              align="center"
+              justify="center"
+              gap="small"
+              pad={{ top: "medium", bottom: "medium" }}
+              border={{ side: "bottom", color: "dark-1" }}
+            >
+              <Anchor size="medium" href="/" color="white" label="Home" />
+              <Divider />
+              <Anchor size="medium" href="/about" color="white" label="About" />
+              <Divider />
 
-            {!authenticated ? (
-              <Box direction="row" gap="medium">
-                <Button
-                  secondary
-                  color="red"
-                  href="/register"
-                  label="Sign Up"
-                />
-                <Button primary color="red" href="/login" label="Log In" />
-              </Box>
-            ) : (
-              <Box direction="row" gap="medium">
-                <Button
-                  primary
-                  color="red"
-                  href="/dashboard"
-                  label="Dashboard"
-                />
-              </Box>
-            )}
-          </Box>
-        </Collapsible>
+              {!authenticated ? (
+                <Box direction="row" gap="medium">
+                  <Button
+                    secondary
+                    color="red"
+                    href="/register"
+                    label="Sign Up"
+                  />
+                  <Button primary color="red" href="/login" label="Log In" />
+                </Box>
+              ) : (
+                <Box direction="row" gap="medium">
+                  <Button
+                    secondary
+                    color="red"
+                    href="/login"
+                    label="Sign Out"
+                  />
+                  <Button
+                    primary
+                    color="red"
+                    href="/dashboard"
+                    label="Dashboard"
+                  />
+                </Box>
+              )}
+            </Box>
+          </Collapsible>
+        </div>
       </div>
     );
   }
@@ -104,7 +114,15 @@ const Navbar: FC<NavBarProps> = ({ authenticated }) => {
           <Button primary color="red" href="/login" label="Log In" />
         </Nav>
       ) : (
-        <Nav>
+        <Nav direction="row" align="center">
+          <Button
+            secondary
+            color="red"
+            onClick={async () => {
+              await auth.signOut();
+            }}
+            label="Log Out"
+          />
           <Button primary color="red" href="/dashboard" label="Dashboard" />
         </Nav>
       )}

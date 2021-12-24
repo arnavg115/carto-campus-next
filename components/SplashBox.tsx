@@ -30,7 +30,7 @@ const SplashBox = () => {
           Going the Extra Mile
         </Heading>
         <Button
-          href="/register?path=dashboard"
+          href="/dashboard"
           margin={{ bottom: "100px" }}
           primary
           alignSelf="center"

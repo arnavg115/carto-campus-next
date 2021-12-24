@@ -34,6 +34,13 @@ const resolvers = {
       const data = await School.find({});
       return data;
     },
+    async getSchoolByName(
+      parent: any,
+      { name, zip }: { name: string; zip: number }
+    ) {
+      const data = await School.findOne({ name, zip });
+      return data;
+    },
   },
 };
 

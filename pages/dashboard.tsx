@@ -4,23 +4,24 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import mapboxgl from "mapbox-gl";
 import {
   AuthAction,
+  getFirebaseAdmin,
   useAuthUser,
   withAuthUser,
   withAuthUserTokenSSR,
 } from "next-firebase-auth";
 import { CartoPage } from "../components/CartoPage";
-import { NonMapPage } from "../components/NonMapPage";
+
 import { NextPage } from "next";
 import MapInput from "../components/MapInput";
 import { RoomType } from "../lib/barrel";
 import { server } from "../lib/config";
 import { useRouter } from "next/router";
 import { Button, Collapsible } from "grommet";
-import { get, getRoute, midpoint } from "../lib/clientUtils";
-import firebase from "firebase";
+import { get, getRoute, meterstoft, midpoint } from "../lib/clientUtils";
+import styles from "../styles/Dashboard.module.css";
 
 // @ts-ignore
-const DashboardPage: NextPage = ({ init }) => {
+const DashboardPage: NextPage = ({ init, prefs }) => {
   const Auth = useAuthUser();
   mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX!;
   const [dir, setDir] = useState<any>(null);
@@ -35,6 +36,7 @@ const DashboardPage: NextPage = ({ init }) => {
     if (!Auth.emailVerified) {
       router.push("/verify");
     }
+    console.log(prefs);
     initState();
   }, []);
   const nav = async (
@@ -158,34 +160,24 @@ const DashboardPage: NextPage = ({ init }) => {
       />
       <div ref={mapContainer} style={{ height: "100%", width: "100%" }}></div>
       {dir ? (
-        <div
-          style={{
-            width: "250px",
-            backgroundColor: "white",
-            position: "absolute",
-            zIndex: 2,
-            right: 0,
-            bottom: 0,
-            marginBottom: "30px",
-            marginRight: "10px",
-            borderRadius: "10px",
-            maxHeight: "300px",
-            overflowY: "auto",
-          }}
-        >
+        <div className={styles.dirbox}>
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "1fr 1fr 0.5fr",
+              gridTemplateColumns: "1fr 1fr  1fr 0.5fr",
               padding: "10px",
+              position: "sticky",
+              top: "0",
+              backgroundColor: "black",
+              color: "white",
             }}
           >
-            <p style={{ margin: "0px" }}>
+            <p style={{}}>
               {Math.floor(dir.duration / 60)} min{" "}
               {Math.floor(dir.duration % 60)} s
             </p>
             <p style={{ margin: "0px" }}>
-              ETA:{" "}
+              <p style={{ margin: "0px" }}>ETA:</p>
               {(() => {
                 const e = new Date(Date.now() + dir.duration * 1000);
                 // console.log(e);
@@ -199,18 +191,39 @@ const DashboardPage: NextPage = ({ init }) => {
                 return str;
               })()}
             </p>
-            <Button icon={<FormDown />} onClick={() => setOpen(!open)} />
+            <p>
+              {prefs !== [] && prefs.units === "imperial"
+                ? `${(meterstoft(dir.distance as number) / 5280).toFixed(2)} mi`
+                : `${(dir.distance / 1000).toFixed(2)} km`}
+            </p>
+            <Button
+              icon={<FormDown />}
+              onClick={() => setOpen(!open)}
+              style={{
+                transform: !open ? "rotate(0deg)" : "rotate(180deg)",
+                transition: "all 0.2s ease-in-out",
+              }}
+            />
           </div>
-          <Collapsible
-            open={open}
-            style={{
-              padding: "10px",
-            }}
-          >
-            {dir.legs[0].steps.map((x: any) => {
-              return <p key={Math.random()}>{x.maneuver.instruction}</p>;
-            })}
-          </Collapsible>
+          <div style={{ background: "black" }}>
+            <Collapsible open={open}>
+              {dir.legs[0].steps.map((x: any) => {
+                return (
+                  <p
+                    key={Math.random()}
+                    style={{
+                      padding: "10px",
+                      backgroundColor: "black",
+                      margin: "0px",
+                      color: "lightgray",
+                    }}
+                  >
+                    {x.maneuver.instruction}
+                  </p>
+                );
+              })}
+            </Collapsible>
+          </div>
         </div>
       ) : null}
     </CartoPage>
@@ -236,11 +249,23 @@ export const getServerSideProps = withAuthUserTokenSSR()(
         },
       }
     );
-    // console.log(response.status);
+    const db = getFirebaseAdmin().firestore();
+    const doc = await db.collection("users").doc(AuthUser.id!).get();
     const data = (await response.json()).data as RoomType[];
+
+    if (!doc.exists) {
+      return {
+        props: {
+          init: data,
+          prefs: [],
+        },
+      };
+    }
+
     return {
       props: {
         init: data,
+        prefs: doc.data(),
       },
     };
   }

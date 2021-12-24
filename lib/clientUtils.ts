@@ -53,5 +53,8 @@ function midpoint(or: number[], dest: number[]): [number, number] {
   const y = (or[1] + dest[1]) / 2;
   return [x, y];
 }
+function meterstoft(m: number) {
+  return m * 3.28084;
+}
 
-export { search, get, getRoute, midpoint };
+export { search, get, getRoute, midpoint, meterstoft };

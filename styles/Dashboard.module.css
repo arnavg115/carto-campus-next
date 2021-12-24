@@ -2,7 +2,7 @@
   position: absolute;
   top: 5px;
   z-index: 1;
-  right:0;
+  right: 0;
   width: 250px;
   display: grid;
   grid-template-columns: 10fr 1fr;
@@ -14,4 +14,29 @@
   .inptbox {
     width: 150px;
   }
+}
+
+.dirbox {
+  width: 250px;
+  background-color: white;
+  position: absolute;
+  z-index: 2;
+  right: 0;
+  bottom: 0;
+  margin-bottom: 30px;
+  margin-right: 10px;
+  border-radius: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+  font-size: small;
+}
+
+.dirbox::-webkit-scrollbar {
+  width: 6px;
+  height: 10px;
+}
+
+.dirbox::-webkit-scrollbar-thumb {
+  background: rgb(121, 121, 121);
+  border-radius: 10px;
 }

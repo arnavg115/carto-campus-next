@@ -17,7 +17,7 @@ export const CartoPage: FC<CartoPageProps> = ({ children, auth, landing }) => {
     return (
       <div>
         <NotificationPanel />
-        <Navbar authenticated={!!auth.email} />
+        <Navbar authenticated={!!auth.email} auth={auth} />
         {children}
         <CartoFooter />
       </div>
