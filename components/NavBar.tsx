@@ -34,7 +34,14 @@ const Navbar: FC<NavBarProps> = ({ authenticated }) => {
             />
             <Anchor size="medium" href="/" color="white" label="Carto-Campus" />
           </Box>
-          <Button icon={<FormDown />} onClick={() => setOpen(!open)} />
+          <Button
+            icon={<FormDown />}
+            onClick={() => setOpen(!open)}
+            style={{
+              transform: !open ? "rotate(0deg)" : "rotate(180deg)",
+              transition: "all 0.2s ease-in-out",
+            }}
+          />
         </Header>
         <Collapsible open={open}>
           <Box
