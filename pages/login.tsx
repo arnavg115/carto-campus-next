@@ -12,7 +12,11 @@ import { useField } from "../lib/hooks";
 
 const LoginPage = () => {
   const Login = async () => {
-    await firebase.auth().signInWithEmailAndPassword(email, password);
+    try {
+      await firebase.auth().signInWithEmailAndPassword(email, password);
+    } catch (e: any) {
+      alert(e.message);
+    }
   };
   const [email, setEmail] = useField("");
   const [password, setPassword] = useField("");

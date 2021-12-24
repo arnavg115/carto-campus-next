@@ -1,9 +1,9 @@
-import { ApolloServer } from "apollo-server-micro";
+import { ApolloServer, gql } from "apollo-server-micro";
 import { NextApiRequest, NextApiResponse } from "next";
 import mongoose from "mongoose";
-import { School, typeDefs, utils } from "../../lib/barrel";
+import { School, utils, typeDefs } from "../../lib/barrel";
 import initAuth from "../../lib/initFirebase";
-import { verifyIdToken } from "next-firebase-auth";
+// import { verifyIdToken } from "next-firebase-auth";
 
 mongoose.connect(process.env.MONGO!);
 
@@ -30,11 +30,15 @@ const resolvers = {
       const data = await School.findById(id);
       return data;
     },
+    async getSchools() {
+      const data = await School.find({});
+      return data;
+    },
   },
 };
 
 const server = new ApolloServer({
-  typeDefs,
+  typeDefs: typeDefs,
   resolvers: resolvers,
   context: ({ req, res }) => ({ req, res }),
 });

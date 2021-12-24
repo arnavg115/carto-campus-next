@@ -6,6 +6,7 @@ const typeDefs = gql`
     search(id: String!, query: String!): [Room!]!
     getCoords(id: String!, query: String!): Room!
     getSchool(id: String!): School!
+    getSchools: [School!]!
   }
   type School {
     _id: String!

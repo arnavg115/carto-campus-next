@@ -17,6 +17,7 @@ import { server } from "../lib/config";
 import { useRouter } from "next/router";
 import { Button, Collapsible } from "grommet";
 import { get, getRoute, midpoint } from "../lib/clientUtils";
+import firebase from "firebase";
 
 // @ts-ignore
 const DashboardPage: NextPage = ({ init }) => {
