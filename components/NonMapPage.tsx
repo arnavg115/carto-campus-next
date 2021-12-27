@@ -9,7 +9,7 @@ export const NonMapPage: FC<NonMapHeaderProps> = ({
   auth,
 }) => {
   return (
-    <CartoPage auth={auth} landing={false}>
+    <CartoPage auth={auth} landing={false} open={false}>
       <Box width="100%" height="100%" background="#282828" align="center">
         <Box width="50%">
           <h1>{title}</h1>
