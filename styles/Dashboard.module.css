@@ -40,3 +40,18 @@
   background: rgb(121, 121, 121);
   border-radius: 10px;
 }
+
+.schoolBox {
+  position: absolute;
+  z-index: 2;
+  left: 100px;
+  background-color: white;
+  top: 10px;
+  border-radius: 4px;
+}
+
+@media screen and (max-width: 700px) {
+  .schoolBox {
+    display: none;
+  }
+}

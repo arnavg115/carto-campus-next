@@ -7,7 +7,6 @@ import { AuthBox } from "../components/AuthBox";
 import CartoLoader from "../components/CartoLoader";
 import NextLink from "../components/Link";
 import { PasswordInput } from "../components/PasswordInput";
-import { colors } from "../lib/Constants";
 import { useField } from "../lib/hooks";
 
 const LoginPage = () => {

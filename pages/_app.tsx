@@ -6,6 +6,8 @@ import type { AppProps } from "next/app";
 import HeadComponent from "../components/Head";
 import initAuth from "../lib/initFirebase";
 import "../styles/globals.css";
+import { FC } from "react";
+import { wrapper } from "../lib/redux";
 
 initAuth();
 const customTheme = deepMerge(grommet, {
@@ -17,7 +19,7 @@ const customTheme = deepMerge(grommet, {
   },
 } as ThemeType);
 
-function MyApp({ Component, pageProps }: AppProps) {
+const MyApp: FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   const client = useApollo(pageProps.initialApolloState);
   return (
     <ApolloProvider client={client}>
@@ -27,6 +29,6 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Grommet>
     </ApolloProvider>
   );
-}
+};
 
-export default MyApp;
+export default wrapper.withRedux(MyApp);

@@ -8,17 +8,24 @@ import {
 } from "next-firebase-auth";
 import { Down } from "grommet-icons";
 import { initializeApollo } from "../lib/apollo";
-import React, { useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import NextLink from "../components/Link";
 import { NonMapPage } from "../components/NonMapPage";
 import { gql } from "@apollo/client";
 import { Box, Button, Select } from "grommet";
+import { Prefs, school } from "../lib/clientTypes";
+import { useRouter } from "next/router";
 
-const Settings = (props: any) => {
+interface SettingsProps {
+  school: school;
+  schools: school[];
+  prefs: Prefs;
+}
+
+const Settings: FC<SettingsProps> = (props) => {
   const auth = useAuthUser();
-  useEffect(() => {
-    console.log(props);
-  }, []);
+  const router = useRouter();
+
   const [units, setUnits] = useState(props.prefs.units as string);
   const [school, setSchool] = useState(
     `${props.school.name}:${props.school.zip}`
@@ -46,6 +53,8 @@ const Settings = (props: any) => {
       units,
       school: data.getSchoolByName._id,
     });
+    alert("Saved");
+    router.push("/dashboard");
   };
   if (!auth.emailVerified) {
     return (
@@ -147,8 +156,8 @@ export const getServerSideProps = withAuthUserTokenSSR()(
         return {
           props: {
             prefs: user.data(),
-            schools: data.getSchools,
-            school: res.data.getSchool,
+            schools: data.getSchools as school[],
+            school: res.data.getSchool as school,
           },
         };
       }
@@ -159,4 +168,5 @@ export const getServerSideProps = withAuthUserTokenSSR()(
 
 export default withAuthUser({
   whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN,
+  // @ts-ignore
 })(Settings);

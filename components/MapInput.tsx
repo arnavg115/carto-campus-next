@@ -4,7 +4,7 @@ import React, { FC, useState } from "react";
 import { Button, TextInput } from "grommet";
 import { Refresh, Launch } from "grommet-icons";
 
-import { RoomType } from "../lib/barrel";
+import { RoomType } from "../lib/clientTypes";
 
 import mapboxgl from "mapbox-gl";
 import { search } from "../lib/clientUtils";

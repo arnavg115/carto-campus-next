@@ -1,8 +1,6 @@
-import Navbar from "../components/NavBar";
-import CartoFooter from "../components/CartoFooter";
 import { Box, Heading } from "grommet";
 
-import { Notification, Help } from "grommet-icons";
+import { Notification } from "grommet-icons";
 import {
   useAuthUser,
   withAuthUser,
@@ -10,7 +8,6 @@ import {
 } from "next-firebase-auth";
 import CardGrid from "../components/CardGrid";
 import { AboutCards } from "../lib/contents";
-import NotificationPanel from "../components/NotificationPanel";
 import { CartoPage } from "../components/CartoPage";
 
 function About() {
