@@ -8,6 +8,7 @@ Next gen carto-campus powered by nextjs and deployed on vercel.
 - mongodb for school data
 - mapbox for maps and navigation
 - graphql for easy api fetching
+- apollo server/client
 
 ## Todo
 - [ ] Finish gql api
