@@ -1,5 +1,5 @@
 {
-  "name": "my-app",
+  "name": "carto-campus-next",
   "private": true,
   "scripts": {
     "dev": "next dev",
