@@ -11,9 +11,12 @@ Next gen carto-campus powered by nextjs and deployed on vercel.
 - apollo server/client
 
 ## Todo
-- [ ] Finish gql api
-- [ ] add navigation
-- [ ] finish user profile fetching
+- [X] Finish gql api
+- [X] add navigation
+- [X] finish user profile fetching
+- [ ] implement multiple schools
+- [ ] add br/wf support
+- [ ] optimize for mobile
 
 ## Run code locally
 1. Clone the repo and cd into the folder
