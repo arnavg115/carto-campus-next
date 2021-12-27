@@ -9,11 +9,12 @@ import {
 import CardGrid from "../components/CardGrid";
 import { AboutCards } from "../lib/contents";
 import { CartoPage } from "../components/CartoPage";
+import { parseCookies } from "../lib/parseCookies";
 
-function About() {
+function About(props: any) {
   const Auth = useAuthUser();
   return (
-    <CartoPage auth={Auth} landing>
+    <CartoPage auth={Auth} landing open={props.open}>
       <Box background="#1c1c1c">
         <Box
           align="center"
@@ -54,6 +55,11 @@ function About() {
     </CartoPage>
   );
 }
-export const getServerSideProps = withAuthUserTokenSSR()();
+export const getServerSideProps = withAuthUserTokenSSR()(
+  async ({ AuthUser, req }) => {
+    const cookies = parseCookies(req);
+    return { props: { open: cookies.open !== "false" } };
+  }
+);
 
 export default withAuthUser()(About);

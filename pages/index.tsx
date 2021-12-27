@@ -13,6 +13,7 @@ import { HomeCards } from "../lib/contents";
 import { CartoPage } from "../components/CartoPage";
 import { gql } from "@apollo/client";
 import { initializeApollo } from "../lib/apollo";
+import { parseCookies } from "../lib/parseCookies";
 
 const query = gql`
   query {
@@ -20,11 +21,11 @@ const query = gql`
   }
 `;
 
-const Home: NextPage = () => {
+const Home: NextPage = (props: any) => {
   const Auth = useAuthUser();
 
   return (
-    <CartoPage auth={Auth} landing>
+    <CartoPage auth={Auth} landing open={props.open}>
       <SplashBox />
       <Box background="#2b2b2b" pad="medium">
         <CartoCarousel />
@@ -35,7 +36,7 @@ const Home: NextPage = () => {
 };
 
 export const getServerSideProps = withAuthUserTokenSSR()(
-  async ({ AuthUser }) => {
+  async ({ AuthUser, req }) => {
     const token = await AuthUser.getIdToken()!;
     const client = initializeApollo();
     const { data } = await client.query({
@@ -46,10 +47,12 @@ export const getServerSideProps = withAuthUserTokenSSR()(
         },
       },
     });
+    const cookies = parseCookies(req);
 
     return {
       props: {
         init: data.hello,
+        open: cookies.open !== "false",
       },
     };
   }

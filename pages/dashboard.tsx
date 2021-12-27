@@ -175,7 +175,7 @@ const DashboardPage: FC<DashboardProps> = ({
   }
 
   return (
-    <CartoPage auth={Auth} landing={false}>
+    <CartoPage auth={Auth} landing={false} open={false}>
       <MapInput
         map={map}
         initSuggestion={init}

@@ -1,14 +1,15 @@
 import { Button, Box, Header, Heading, ResponsiveContext } from "grommet";
 import { Notification } from "grommet-icons";
-import { useContext, useEffect, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 import { Close } from "grommet-icons";
+import Cookies from "js-cookie";
 
-function NotificationPanel() {
-  const [open, setOpen] = useState(true);
-  useEffect(() => {
-    const open = localStorage.getItem("open");
-    setOpen(open !== "false");
-  }, []);
+interface NotificationPanelProps {
+  openPanel: boolean;
+}
+
+const NotificationPanel: FC<NotificationPanelProps> = ({ openPanel }) => {
+  const [open, setOpen] = useState(openPanel);
 
   if (!open) {
     return null;
@@ -44,12 +45,12 @@ function NotificationPanel() {
           icon={<Close />}
           onClick={() => {
             setOpen(false);
-            localStorage.setItem("open", "false");
+            Cookies.set("open", "false");
           }}
         />
       </Box>
     </Header>
   );
-}
+};
 
 export default NotificationPanel;

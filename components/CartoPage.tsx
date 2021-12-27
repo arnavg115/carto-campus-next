@@ -10,13 +10,19 @@ import SideBar from "./SideBar";
 interface CartoPageProps {
   auth: AuthUserContext;
   landing: boolean;
+  open: boolean;
 }
 
-export const CartoPage: FC<CartoPageProps> = ({ children, auth, landing }) => {
+export const CartoPage: FC<CartoPageProps> = ({
+  children,
+  auth,
+  landing,
+  open,
+}) => {
   if (landing) {
     return (
       <div>
-        <NotificationPanel />
+        <NotificationPanel openPanel={open} />
         <Navbar authenticated={!!auth.email} auth={auth} />
         {children}
         <CartoFooter />
