@@ -2,25 +2,36 @@ import styles from "../styles/Dashboard.module.css";
 
 import React, { FC, useState } from "react";
 import { Button, TextInput } from "grommet";
-import { Refresh, Launch } from "grommet-icons";
+import { Refresh, Launch, Save, History } from "grommet-icons";
 
 import { RoomType } from "../lib/clientTypes";
 
 import mapboxgl from "mapbox-gl";
 import { search } from "../lib/clientUtils";
+import firebase from "firebase";
+import { AuthUserContext } from "next-firebase-auth";
+import { useSelector } from "react-redux";
+import { State } from "../lib/redux";
 interface MapInputProps {
   map: React.MutableRefObject<mapboxgl.Map | null>;
   initSuggestion: RoomType[];
   nav: (origin: string, dest: string, reset: (fly: boolean) => void) => void;
   resetDashboard: () => void;
+  navOn: boolean;
+  auth: AuthUserContext;
+  fromHistory: () => void;
 }
 
 const MapInput: FC<MapInputProps> = ({
   initSuggestion,
   map,
   nav,
+  navOn,
   resetDashboard,
+  auth,
+  fromHistory,
 }) => {
+  const state = useSelector<State, State>((state) => state);
   const [origin, setOrigin] = useState("");
   const [dest, setDest] = useState("");
   const [orS, setORS] = useState<RoomType[]>(initSuggestion);
@@ -97,6 +108,39 @@ const MapInput: FC<MapInputProps> = ({
         primary
         color={"black"}
         onClick={() => nav(origin, dest, reset)}
+      />
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row-reverse",
+        }}
+      >
+        <Button
+          primary
+          icon={<History color="white" />}
+          style={{ width: "48px" }}
+          onClick={fromHistory}
+        />
+      </div>
+      <Button
+        icon={<Save />}
+        primary
+        color={"white"}
+        disabled={!navOn}
+        onClick={async () => {
+          const doc = firebase
+            .firestore()
+            .collection("users")
+            .doc(auth.id!)
+            .collection("routes");
+          await doc.add({
+            origin: origin,
+            dest: dest,
+            time: Date.now(),
+            school: state.school,
+          });
+          alert("Route saved!");
+        }}
       />
     </div>
   );

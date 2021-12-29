@@ -1,3 +1,7 @@
+.modalBox {
+  width: 300px;
+}
+
 .inptbox {
   position: absolute;
   top: 5px;
@@ -13,6 +17,11 @@
 @media screen and (max-width: 340px) {
   .inptbox {
     width: 150px;
+  }
+}
+@media screen and (max-width: 420px) {
+  .modalBox {
+    width: 90%;
   }
 }
 

@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import "mapbox-gl/dist/mapbox-gl.css";
 import mapboxgl from "mapbox-gl";
+import { Close } from "grommet-icons";
 import {
   AuthAction,
   AuthUserContext,
@@ -9,6 +10,7 @@ import {
   withAuthUser,
   withAuthUserTokenSSR,
 } from "next-firebase-auth";
+import styles from "../styles/Dashboard.module.css";
 import { CartoPage } from "../components/CartoPage";
 import MapInput from "../components/MapInput";
 import { server } from "../lib/config";
@@ -21,7 +23,9 @@ import { NextApiRequestCookies } from "next/dist/server/api-utils";
 import SchoolPicker from "../components/SchoolPicker";
 import { gql } from "@apollo/client";
 import { initializeApollo } from "../lib/apollo";
+import Modal from "react-modal";
 import { Prefs, school, RoomType } from "../lib/clientTypes";
+import { Box, Button } from "grommet";
 
 interface DashboardProps {
   init: RoomType[];
@@ -38,10 +42,13 @@ const DashboardPage: FC<DashboardProps> = ({
   const Auth = useAuthUser();
   const state = useSelector((state) => state);
   mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX!;
+  Modal.defaultStyles.content!.padding = "0px";
+  Modal.defaultStyles.overlay!.backgroundColor = "rgba(0,0,0,0.5)";
   const [dir, setDir] = useState<any>(null);
   const [open, setOpen] = useState(false);
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const map = useRef<null | mapboxgl.Map>(null);
+  const [ModalOpen, setModalOpen] = useState(false);
   const router = useRouter();
   const resetParent = () => {
     setDir(null);
@@ -176,11 +183,53 @@ const DashboardPage: FC<DashboardProps> = ({
 
   return (
     <CartoPage auth={Auth} landing={false} open={false}>
+      <Modal
+        isOpen={ModalOpen}
+        style={{
+          overlay: {
+            zIndex: 100,
+            padding: "0px",
+          },
+        }}
+      >
+        <Box width="100%" height="100%" background="black" align="center">
+          <div
+            style={{
+              width: "calc(100% - 20px)",
+              display: "flex",
+              flexDirection: "row-reverse",
+              padding: "10px",
+            }}
+          >
+            <Button
+              style={{
+                borderRadius: "10px",
+              }}
+              icon={<Close />}
+              onClick={() => setModalOpen(false)}
+              hoverIndicator
+            />
+          </div>
+          <div className={styles.modalBox}>
+            <h1>Saved Routes</h1>
+            <Box
+              height="2.5px"
+              width="100%"
+              style={{ backgroundColor: "grey" }}
+            ></Box>
+          </div>
+        </Box>
+      </Modal>
       <MapInput
+        fromHistory={() => {
+          setModalOpen(true);
+        }}
+        auth={Auth}
         map={map}
         initSuggestion={init}
         nav={nav}
         resetDashboard={resetParent}
+        navOn={!!dir}
       />
       <SchoolPicker initSchool={school} schools={schools} />
       <div ref={mapContainer} style={{ height: "100%", width: "100%" }}></div>
