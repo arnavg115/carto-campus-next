@@ -1,10 +1,14 @@
 import React, { FC } from "react";
 
-const Divider: FC = () => {
+interface DividerProps {
+  height?: string;
+}
+
+const Divider: FC<DividerProps> = ({ height }) => {
   return (
     <div
       style={{
-        height: "1px",
+        height: height || "1px",
         width: "100%",
         backgroundColor: "#262626",
         marginTop: "5px",

@@ -18,3 +18,11 @@ body {
 ::-webkit-scrollbar-track {
   background: rgb(32, 32, 32);
 }
+
+h4 {
+  margin: 0px;
+}
+
+p {
+  margin: 0px;
+}

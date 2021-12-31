@@ -1,17 +1,15 @@
 import styles from "../styles/Dashboard.module.css";
-
 import React, { FC, useState } from "react";
 import { Button, TextInput } from "grommet";
 import { Refresh, Launch, Save, History } from "grommet-icons";
-
 import { RoomType } from "../lib/clientTypes";
-
 import mapboxgl from "mapbox-gl";
 import { search } from "../lib/clientUtils";
 import firebase from "firebase";
 import { AuthUserContext } from "next-firebase-auth";
 import { useSelector } from "react-redux";
 import { State } from "../lib/redux";
+import DashModal from "./DashModal";
 interface MapInputProps {
   map: React.MutableRefObject<mapboxgl.Map | null>;
   initSuggestion: RoomType[];
@@ -19,7 +17,8 @@ interface MapInputProps {
   resetDashboard: () => void;
   navOn: boolean;
   auth: AuthUserContext;
-  fromHistory: () => void;
+  distance: number;
+  metric: boolean;
 }
 
 const MapInput: FC<MapInputProps> = ({
@@ -29,9 +28,12 @@ const MapInput: FC<MapInputProps> = ({
   navOn,
   resetDashboard,
   auth,
-  fromHistory,
+  metric,
+  distance,
 }) => {
   const state = useSelector<State, State>((state) => state);
+  const [saved, setSaved] = useState<any[]>([]);
+  const [ModalOpen, setModalOpen] = useState(false);
   const [origin, setOrigin] = useState("");
   const [dest, setDest] = useState("");
   const [orS, setORS] = useState<RoomType[]>(initSuggestion);
@@ -60,9 +62,36 @@ const MapInput: FC<MapInputProps> = ({
       setORS([]);
     }
   };
+  const fetchSaved = async () => {
+    const docs = await firebase
+      .firestore()
+      .collection("users")
+      .doc(auth.id!)
+      .collection("routes")
+      .where("school", "==", state.school)
+      .get();
+    const data = docs.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+    console.log(data);
+    setSaved(docs.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+  };
 
   return (
     <div className={styles.inptbox}>
+      <DashModal
+        metric={metric}
+        saved={saved}
+        setSaved={setSaved}
+        fetchSaved={fetchSaved}
+        setModalOpen={setModalOpen}
+        ModalOpen={ModalOpen}
+        Auth={auth}
+        navigate={(or, dest) => {
+          nav(or, dest, reset);
+          setOrigin(or);
+          setDest(dest);
+          setModalOpen(false);
+        }}
+      />
       <TextInput
         style={{ backgroundColor: "white" }}
         placeholder="Starting Point"
@@ -119,7 +148,10 @@ const MapInput: FC<MapInputProps> = ({
           primary
           icon={<History color="white" />}
           style={{ width: "48px" }}
-          onClick={fromHistory}
+          onClick={() => {
+            fetchSaved();
+            setModalOpen(true);
+          }}
         />
       </div>
       <Button
@@ -133,11 +165,20 @@ const MapInput: FC<MapInputProps> = ({
             .collection("users")
             .doc(auth.id!)
             .collection("routes");
+          const data = await doc
+            .where("origin", "==", origin)
+            .where("dest", "==", dest)
+            .get();
+          if (!data.empty) {
+            alert("Route already saved");
+            return;
+          }
           await doc.add({
             origin: origin,
             dest: dest,
             time: Date.now(),
             school: state.school,
+            distance: distance,
           });
           alert("Route saved!");
         }}

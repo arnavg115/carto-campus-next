@@ -1,5 +1,5 @@
 .modalBox {
-  width: 300px;
+  width: 75%;
 }
 
 .inptbox {
@@ -48,6 +48,13 @@
 .dirbox::-webkit-scrollbar-thumb {
   background: rgb(121, 121, 121);
   border-radius: 10px;
+}
+
+.listGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-gap: 10px;
+  padding: 10px;
 }
 
 .schoolBox {

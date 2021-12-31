@@ -52,7 +52,7 @@ const DirBox: FC<DirBoxProps> = ({ dir, prefs, open, setOpen }) => {
           icon={<FormDown />}
           onClick={() => setOpen(!open)}
           style={{
-            transform: !open ? "rotate(0deg)" : "rotate(180deg)",
+            transform: !open ? "rotate(180deg)" : "rotate(0deg)",
             transition: "all 0.2s ease-in-out",
           }}
         />
