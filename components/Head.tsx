@@ -9,6 +9,7 @@ const HeadComponent = () => {
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <meta name="theme-color" content="#000000" />
       <meta name="description" content="Going the Extra Mile" />
+      <meta name="google-site-verification" content="NgTvhzI916BMLwlYtfyYyWQwzVG379aoCpbKB8ivQVY" />
       {/* <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" /> */}
 
       {/* <link rel="manifest" href="%PUBLIC_URL%/manifest.json" /> */}
