@@ -4,7 +4,7 @@ import { SETSCHOOL } from "./actionTypes";
 import { State } from "./types";
 
 const mainReducer = (
-  state: State = { school: "" },
+  state: State = { school: "61a83693444ddc3829a46f3a" },
   action: AnyAction
 ) => {
   switch (action.type) {

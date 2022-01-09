@@ -13,8 +13,8 @@ import { CartoPage } from "../components/CartoPage";
 import { server } from "../lib/config";
 import { useRouter } from "next/router";
 import { get, getRoute, midpoint } from "../lib/clientUtils";
-import { SETSCHOOL, State, wrapper } from "../lib/redux";
-import { useSelector } from "react-redux";
+import { SetSchool, SETSCHOOL, State, wrapper } from "../lib/redux";
+import { useDispatch, useSelector } from "react-redux";
 import { NextApiRequestCookies } from "next/dist/server/api-utils";
 import { gql } from "@apollo/client";
 import { initializeApollo } from "../lib/apollo";
@@ -36,9 +36,12 @@ const DashboardPage: FC<DashboardProps> = ({
 }) => {
   const Auth = useAuthUser();
   const router = useRouter();
+  const dispatch = useDispatch();
   useEffect(() => {
     if (!Auth.emailVerified) {
       router.push("/verify");
+    } else {
+      dispatch(SetSchool(prefs.school));
     }
   }, []);
 
@@ -80,6 +83,7 @@ export const getServerSideProps = withAuthUserTokenSSR()(
           },
         };
       }
+      console.log(doc.data()!.school);
       store.dispatch({ type: SETSCHOOL, payload: doc.data()!.school });
       const query = gql`
         query Query($id: String!) {
@@ -89,8 +93,10 @@ export const getServerSideProps = withAuthUserTokenSSR()(
             _id
           }
           getSchool(id: $id) {
+            _id
             zip
             name
+            coord
           }
         }
       `;
@@ -101,6 +107,7 @@ export const getServerSideProps = withAuthUserTokenSSR()(
           id: doc.data()!.school,
         },
       });
+
       const response = await fetch(
         `${server}/api/init?id=${doc.data()!.school}`,
         {

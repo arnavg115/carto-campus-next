@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 import { Select } from "grommet";
 import Cookies from "js-cookie";
-import React, { FC, useState } from "react";
+import React, { FC, SetStateAction, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { initializeApollo } from "../lib/apollo";
 import { school } from "../lib/clientTypes";

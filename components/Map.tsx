@@ -1,7 +1,9 @@
-import mapboxgl from "mapbox-gl";
+import { gql } from "@apollo/client";
+import mapboxgl, { LngLatLike } from "mapbox-gl";
 import { AuthUserContext } from "next-firebase-auth";
 import React, { FC, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
+import { initializeApollo } from "../lib/apollo";
 import { Prefs, RoomType, school } from "../lib/clientTypes";
 import { get, getRoute, midpoint } from "../lib/clientUtils";
 import { State } from "../lib/redux";
@@ -23,17 +25,39 @@ const Map: FC<MapProps> = ({ init, school, schools, prefs, Auth }) => {
   const [dir, setDir] = useState<any>(null);
   const [open, setOpen] = useState(false);
   const state = useSelector((state: State) => state);
+  const [cent, setCent] = useState(school.coord);
   mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX!;
   useEffect(() => {
     initState();
   }, []);
+  useEffect(() => {
+    handleSchoolChange();
+  }, [state]);
+  async function handleSchoolChange() {
+    const query = gql`
+      query ($getSchoolId: String!) {
+        getSchool(id: $getSchoolId) {
+          coord
+        }
+      }
+    `;
+    const client = initializeApollo();
+    const { data } = await client.query({
+      query,
+      variables: {
+        getSchoolId: state.school,
+      },
+    });
+    setCent(data.getSchool.coord);
+    map.current?.panTo(data.getSchool.coord);
+  }
   async function initState() {
     console.log("initState");
     // if (map.current) return; // initialize map only once
     map.current = new mapboxgl.Map({
       container: mapContainer.current!,
       style: "mapbox://styles/garnavaurha/ckvhltoso6l3m14qq44abl01u",
-      center: [-121.917294, 37.672366],
+      center: school.coord as LngLatLike,
       zoom: 16.5,
       minZoom: 16,
     });
@@ -157,6 +181,7 @@ const Map: FC<MapProps> = ({ init, school, schools, prefs, Auth }) => {
         nav={nav}
         resetDashboard={resetParent}
         navOn={!!dir}
+        cent={cent}
       />
       <SchoolPicker initSchool={school} schools={schools} />
       <div ref={mapContainer} style={{ height: "100%", width: "100%" }}></div>
