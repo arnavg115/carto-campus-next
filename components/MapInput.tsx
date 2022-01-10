@@ -3,7 +3,7 @@ import React, { FC, useState } from "react";
 import { Button, TextInput } from "grommet";
 import { Refresh, Launch, Save, History } from "grommet-icons";
 import { RoomType } from "../lib/clientTypes";
-import mapboxgl from "mapbox-gl";
+import mapboxgl, { LngLatLike } from "mapbox-gl";
 import { search } from "../lib/clientUtils";
 import firebase from "firebase";
 import { AuthUserContext } from "next-firebase-auth";
@@ -19,6 +19,7 @@ interface MapInputProps {
   auth: AuthUserContext;
   distance: number;
   metric: boolean;
+  cent: number[];
 }
 
 const MapInput: FC<MapInputProps> = ({
@@ -30,6 +31,7 @@ const MapInput: FC<MapInputProps> = ({
   auth,
   metric,
   distance,
+  cent,
 }) => {
   const state = useSelector<State, State>((state) => state);
   const [saved, setSaved] = useState<any[]>([]);
@@ -52,7 +54,7 @@ const MapInput: FC<MapInputProps> = ({
     resetDashboard();
     if (fly) {
       map.current!.flyTo({
-        center: [-121.917294, 37.672366],
+        center: cent as LngLatLike,
         zoom: 16.5,
       });
 
@@ -97,10 +99,7 @@ const MapInput: FC<MapInputProps> = ({
         placeholder="Starting Point"
         onChange={async (e) => {
           setOrigin(e.target.value);
-          const suggestions = await search(
-            "61a83693444ddc3829a46f3a",
-            e.target.value
-          );
+          const suggestions = await search(state.school, e.target.value);
           setORS(suggestions);
         }}
         value={origin}
@@ -120,10 +119,7 @@ const MapInput: FC<MapInputProps> = ({
         placeholder="Destination"
         onChange={async (e) => {
           setDest(e.target.value);
-          const suggestions = await search(
-            "61a83693444ddc3829a46f3a",
-            e.target.value
-          );
+          const suggestions = await search(state.school, e.target.value);
           setDestS(suggestions);
         }}
         suggestions={destS.map((s) => s.name)}

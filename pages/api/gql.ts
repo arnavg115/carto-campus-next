@@ -20,7 +20,7 @@ const resolvers = {
     async getCoords(parent: any, { id, query }: { id: string; query: string }) {
       const data = await utils.getSchoolData(id);
       const rs = utils.get(query, data);
-      console.log(rs);
+      // console.log(rs);
       if (!rs) {
         throw new Error("Not Found");
       }
