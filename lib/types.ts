@@ -6,6 +6,7 @@ export interface PassWordInputProps {
   password: string;
   setPassword: (e: React.ChangeEvent<HTMLInputElement>) => void;
   size?: string;
+  placeholder?: string;
 }
 
 // export interface CAnchorProps {

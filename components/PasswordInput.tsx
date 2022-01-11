@@ -9,6 +9,7 @@ export const PasswordInput: FC<PassWordInputProps> = ({
   password,
   setPassword,
   size,
+  placeholder
 }) => {
   const [view, setView] = useState(false);
   return (
@@ -17,7 +18,7 @@ export const PasswordInput: FC<PassWordInputProps> = ({
         type={view ? "text" : "password"}
         value={password}
         onChange={setPassword}
-        placeholder="Password"
+        placeholder={placeholder || "Password"}
         size={size || "medium"}
       />
       <Button

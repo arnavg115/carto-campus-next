@@ -47,6 +47,7 @@ const RegisterPage = () => {
       <PasswordInput
         password={passwordConf}
         setPassword={setPasswordConf}
+        placeholder="Confirm Your Password"
         size={"small"}
       />
       <Button
