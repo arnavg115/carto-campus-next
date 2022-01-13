@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef, useState } from "react";
+import React, { FC, useEffect } from "react";
 import "mapbox-gl/dist/mapbox-gl.css";
 import mapboxgl from "mapbox-gl";
 import {
@@ -12,10 +12,8 @@ import {
 import { CartoPage } from "../components/CartoPage";
 import { server } from "../lib/config";
 import { useRouter } from "next/router";
-import { get, getRoute, midpoint } from "../lib/clientUtils";
-import { SetSchool, SETSCHOOL, State, wrapper } from "../lib/redux";
-import { useDispatch, useSelector } from "react-redux";
-import { NextApiRequestCookies } from "next/dist/server/api-utils";
+import { SetSchool } from "../lib/redux";
+import { useDispatch } from "react-redux";
 import { gql } from "@apollo/client";
 import { initializeApollo } from "../lib/apollo";
 
@@ -59,75 +57,80 @@ const DashboardPage: FC<DashboardProps> = ({
 };
 
 export const getServerSideProps = withAuthUserTokenSSR()(
-  wrapper.getServerSideProps((store) =>
-    // @ts-ignore
-    async ({ AuthUser, req }: { AuthUser: AuthUserContext; req: NextApiRequestCookies }) => {
-      if (!AuthUser.emailVerified) {
-        return {
-          props: {
-            init: [],
-          },
-        };
-      }
-
-      const token = await AuthUser.getIdToken();
-      if (!token) return { props: { init: [] } };
-      const db = getFirebaseAdmin().firestore();
-      const doc = await db.collection("users").doc(AuthUser.id!).get();
-
-      if (!doc.exists) {
-        return {
-          props: {
-            init: [],
-            prefs: [],
-          },
-        };
-      }
-      console.log(doc.data()!.school);
-      store.dispatch({ type: SETSCHOOL, payload: doc.data()!.school });
-      const query = gql`
-        query Query($id: String!) {
-          getSchools {
-            zip
-            name
-            _id
-          }
-          getSchool(id: $id) {
-            _id
-            zip
-            name
-            coord
-          }
-        }
-      `;
-      const client = initializeApollo();
-      const { data: queryData } = await client.query({
-        query,
-        variables: {
-          id: doc.data()!.school,
-        },
-      });
-
-      const response = await fetch(
-        `${server}/api/init?id=${doc.data()!.school}`,
-        {
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const data = (await response.json()).data as RoomType[];
-
+  async ({ AuthUser }) => {
+    if (!AuthUser.emailVerified) {
       return {
         props: {
-          init: data,
-          prefs: doc.data(),
-          schools: queryData.getSchools,
-          school: queryData.getSchool,
+          init: [],
+          school: {
+            coord: [],
+            prefs: {
+              units: "metric",
+            },
+          },
         },
       };
     }
-  )
+
+    const token = await AuthUser.getIdToken();
+    if (!token) return { props: { init: [] } };
+    const db = getFirebaseAdmin().firestore();
+    const doc = await db.collection("users").doc(AuthUser.id!).get();
+
+    if (!doc.exists) {
+      return {
+        props: {
+          init: [],
+          prefs: {
+            units: "metric",
+          },
+        },
+      };
+    }
+    console.log(doc.data()!.school);
+    // store.dispatch({ type: SETSCHOOL, payload: doc.data()!.school });
+    const query = gql`
+      query Query($id: String!) {
+        getSchools {
+          zip
+          name
+          _id
+        }
+        getSchool(id: $id) {
+          _id
+          zip
+          name
+          coord
+        }
+      }
+    `;
+    const client = initializeApollo();
+    const { data: queryData } = await client.query({
+      query,
+      variables: {
+        id: doc.data()!.school,
+      },
+    });
+
+    const response = await fetch(
+      `${server}/api/init?id=${doc.data()!.school}`,
+      {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    const data = (await response.json()).data as RoomType[];
+
+    return {
+      props: {
+        init: data,
+        prefs: doc.data(),
+        schools: queryData.getSchools,
+        school: queryData.getSchool,
+      },
+    };
+  }
 );
 
 export default withAuthUser({
