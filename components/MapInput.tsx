@@ -1,5 +1,5 @@
 import styles from "../styles/Dashboard.module.css";
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Button, TextInput } from "grommet";
 import { Refresh, Launch, Save, History } from "grommet-icons";
 import { RoomType } from "../lib/clientTypes";
@@ -10,10 +10,11 @@ import { AuthUserContext } from "next-firebase-auth";
 import { useSelector } from "react-redux";
 import { State } from "../lib/redux";
 import DashModal from "./DashModal";
+import { server } from "../lib/config";
 interface MapInputProps {
   map: React.MutableRefObject<mapboxgl.Map | null>;
   initSuggestion: RoomType[];
-  nav: (origin: string, dest: string, reset: (fly: boolean) => void) => void;
+  nav: (origin: string, dest: string, reset: (fly: boolean) => void) => any;
   resetDashboard: () => void;
   navOn: boolean;
   auth: AuthUserContext;
@@ -39,8 +40,20 @@ const MapInput: FC<MapInputProps> = ({
   const [origin, setOrigin] = useState("");
   const [dest, setDest] = useState("");
   const [orS, setORS] = useState<RoomType[]>(initSuggestion);
+  const [loading, setLoading] = useState(true);
 
   const [destS, setDestS] = useState<RoomType[]>(initSuggestion);
+  useEffect(() => {
+    handleChange();
+  }, [state]);
+
+  async function handleChange() {
+    const response = await fetch(`${server}/api/init?id=${state.school}`);
+    const init = (await response.json()).data as RoomType[];
+    setDestS(init);
+    setORS(init);
+  }
+
   const removeLayer = (name: string) => {
     if (map.current!.getLayer(name)) {
       map.current!.removeLayer(name);
@@ -65,6 +78,7 @@ const MapInput: FC<MapInputProps> = ({
     }
   };
   const fetchSaved = async () => {
+    setLoading(true);
     const docs = await firebase
       .firestore()
       .collection("users")
@@ -72,14 +86,15 @@ const MapInput: FC<MapInputProps> = ({
       .collection("routes")
       .where("school", "==", state.school)
       .get();
-    const data = docs.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-    console.log(data);
+    // const data = docs.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setSaved(docs.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    setLoading(false);
   };
 
   return (
     <div className={styles.inptbox}>
       <DashModal
+        loading={loading}
         metric={metric}
         saved={saved}
         setSaved={setSaved}
@@ -132,7 +147,12 @@ const MapInput: FC<MapInputProps> = ({
         icon={<Launch />}
         primary
         color={"black"}
-        onClick={() => nav(origin, dest, reset)}
+        onClick={async () => {
+          const out = await nav(origin, dest, reset);
+          console.log(out);
+          setOrigin(out.ori as string);
+          setDest(out.dsti as string);
+        }}
       />
       <div
         style={{

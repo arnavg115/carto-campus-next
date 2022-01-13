@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.5.6",
+    "@watergis/mapbox-gl-print": "^1.0.1",
     "apollo-server-micro": "^3.5.0",
     "class-validator": "^0.13.2",
     "cookie": "^0.4.1",

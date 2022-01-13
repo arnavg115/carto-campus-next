@@ -2,6 +2,8 @@ import { gql } from "@apollo/client";
 import mapboxgl, { LngLatLike } from "mapbox-gl";
 import { AuthUserContext } from "next-firebase-auth";
 import React, { FC, useEffect, useRef, useState } from "react";
+import MapboxPrintControl from "@watergis/mapbox-gl-print";
+import "@watergis/mapbox-gl-print/css/styles.css";
 import { useSelector } from "react-redux";
 import { initializeApollo } from "../lib/apollo";
 import { Prefs, RoomType, school } from "../lib/clientTypes";
@@ -48,6 +50,7 @@ const Map: FC<MapProps> = ({ init, school, schools, prefs, Auth }) => {
         getSchoolId: state.school,
       },
     });
+
     setCent(data.getSchool.coord);
     map.current?.panTo(data.getSchool.coord);
   }
@@ -61,6 +64,7 @@ const Map: FC<MapProps> = ({ init, school, schools, prefs, Auth }) => {
       zoom: 16.5,
       minZoom: 16,
     });
+    // map.current.addControl(new MapboxPrintControl(), "bottom-left");
     // fetchSaved();
   }
   const resetParent = () => {
@@ -79,6 +83,7 @@ const Map: FC<MapProps> = ({ init, school, schools, prefs, Auth }) => {
     }
     const or = await get(state.school, origin);
     const dst = await get(state.school, dest);
+    console.log(or.name);
     map.current!.addLayer({
       id: "start",
       type: "circle",
@@ -169,6 +174,7 @@ const Map: FC<MapProps> = ({ init, school, schools, prefs, Auth }) => {
         "line-opacity": 0.75,
       },
     });
+    return { ori: or.name, dsti: dst.name };
   };
   return (
     <div style={{ height: "100%", width: "100%" }}>

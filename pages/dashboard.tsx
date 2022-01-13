@@ -1,9 +1,7 @@
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useState } from "react";
 import "mapbox-gl/dist/mapbox-gl.css";
-import mapboxgl from "mapbox-gl";
 import {
   AuthAction,
-  AuthUserContext,
   getFirebaseAdmin,
   useAuthUser,
   withAuthUser,

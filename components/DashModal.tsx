@@ -3,6 +3,7 @@ import Modal from "react-modal";
 import {
   Box,
   Button,
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -14,8 +15,6 @@ import { Trash, Launch, Close } from "grommet-icons";
 
 import Divider from "./Divider";
 import firebase from "firebase";
-import { useSelector } from "react-redux";
-import { State } from "../lib/redux";
 import { AuthUserContext } from "next-firebase-auth";
 import { meterstoft } from "../lib/clientUtils";
 
@@ -28,6 +27,7 @@ interface DashModalProps {
   setSaved: React.Dispatch<React.SetStateAction<any[]>>;
   fetchSaved: () => Promise<void>;
   metric: boolean;
+  loading: boolean;
 }
 
 const DashModal: FC<DashModalProps> = ({
@@ -39,6 +39,7 @@ const DashModal: FC<DashModalProps> = ({
   setSaved,
   fetchSaved,
   metric,
+  loading,
 }) => {
   Modal.defaultStyles.content!.padding = "0px";
   Modal.defaultStyles.overlay!.backgroundColor = "rgba(0,0,0,0.5)";
@@ -98,56 +99,63 @@ const DashModal: FC<DashModalProps> = ({
         <div className={styles.modalBox}>
           <h1>Saved Routes</h1>
           <Divider height="3px" />
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableCell scope="col" border="bottom"></TableCell>
-                <TableCell scope="col" border="bottom">
-                  Origin
-                </TableCell>
-                <TableCell scope="col" border="bottom">
-                  Destination
-                </TableCell>
-                <TableCell scope="col" border="bottom">
-                  Distance
-                </TableCell>
-                <TableCell scope="col" border="bottom"></TableCell>
-                <TableCell scope="col" border="bottom"></TableCell>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {saved.map((route, ind) => (
-                <TableRow key={Math.random()}>
-                  <TableCell scope="row">
-                    <strong>{ind + 1}</strong>
+          {loading ? (
+            <Box width="100%" align="center">
+              <Spinner />
+            </Box>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableCell scope="col" border="bottom"></TableCell>
+                  <TableCell scope="col" border="bottom">
+                    Origin
                   </TableCell>
-                  <TableCell scope="row">{route.origin}</TableCell>
-                  <TableCell scope="row">{route.dest}</TableCell>
-                  <TableCell scope="row">
-                    {metric
-                      ? (route.distance / 1000).toFixed(2) + " km"
-                      : (meterstoft(route.distance) / 5280).toFixed(2) + " mi"}
+                  <TableCell scope="col" border="bottom">
+                    Destination
                   </TableCell>
-                  <TableCell scope="row">
-                    <Button
-                      onClick={() => deleteSaved(ind)}
-                      style={{ borderRadius: "10px" }}
-                      icon={<Trash />}
-                      hoverIndicator
-                    />
+                  <TableCell scope="col" border="bottom">
+                    Distance
                   </TableCell>
-                  <TableCell scope="row">
-                    <Button
-                      icon={<Launch />}
-                      onClick={() => navigate(route.origin, route.dest)}
-                      style={{ borderRadius: "10px" }}
-                      hoverIndicator
-                    />
-                  </TableCell>
+                  <TableCell scope="col" border="bottom"></TableCell>
+                  <TableCell scope="col" border="bottom"></TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {saved.map((route, ind) => (
+                  <TableRow key={Math.random()}>
+                    <TableCell scope="row">
+                      <strong>{ind + 1}</strong>
+                    </TableCell>
+                    <TableCell scope="row">{route.origin}</TableCell>
+                    <TableCell scope="row">{route.dest}</TableCell>
+                    <TableCell scope="row">
+                      {metric
+                        ? (route.distance / 1000).toFixed(2) + " km"
+                        : (meterstoft(route.distance) / 5280).toFixed(2) +
+                          " mi"}
+                    </TableCell>
+                    <TableCell scope="row">
+                      <Button
+                        onClick={() => deleteSaved(ind)}
+                        style={{ borderRadius: "10px" }}
+                        icon={<Trash />}
+                        hoverIndicator
+                      />
+                    </TableCell>
+                    <TableCell scope="row">
+                      <Button
+                        icon={<Launch />}
+                        onClick={() => navigate(route.origin, route.dest)}
+                        style={{ borderRadius: "10px" }}
+                        hoverIndicator
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </div>
       </Box>
     </Modal>
