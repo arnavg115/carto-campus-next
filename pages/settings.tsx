@@ -162,7 +162,17 @@ export const getServerSideProps = withAuthUserTokenSSR()(
         };
       }
     }
-    return { props: {} };
+    return {
+      props: {
+        prefs: {
+          units: "metric",
+        },
+        school: {
+          name: "",
+          zip: 94588,
+        },
+      },
+    };
   }
 );
 
