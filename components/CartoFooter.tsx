@@ -22,7 +22,7 @@ function CartoFooter() {
       </Box>
       <Media />
       <Text textAlign="center" size="xsmall">
-        ©Copyright Carto 2021
+        ©Copyright Carto 2022
       </Text>
     </Footer>
   );
