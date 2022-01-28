@@ -74,7 +74,6 @@ const RegisterPage = () => {
         instead.
       </p>
       <ToastContainer
-        position="top-left"
         autoClose={5000}
         hideProgressBar={false}
         newestOnTop={false}
