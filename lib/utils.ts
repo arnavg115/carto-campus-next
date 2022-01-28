@@ -1,6 +1,6 @@
 import { extract, FuzzballExtractOptions, partial_ratio } from "fuzzball";
 
-import { BRWF, BRWFTYPE, Room, RoomType, School } from "./barrel";
+import { Room, RoomType, School } from "./barrel";
 
 const options: FuzzballExtractOptions = {
   scorer: partial_ratio,
@@ -55,14 +55,14 @@ const getSchoolData = async (id: string) => {
   return data;
 };
 
-const getSchoolBR = async (id: string, coord: number[]) => {
-  const res = await School.findOne({ _id: id });
-  if (!res) {
-    throw new Error("Not Found");
-  }
-  const brs = (await BRWF.find({ school: res.id })) as BRWFTYPE[];
-  let closest: BRWFTYPE;
-  for (let i = 0; i++; i < brs.length) {}
-};
+// const getSchoolBR = async (id: string, coord: number[]) => {
+//   const res = await School.findOne({ _id: id });
+//   if (!res) {
+//     throw new Error("Not Found");
+//   }
+//   const brs = (await BRWF.find({ school: res.id })) as BRWFTYPE[];
+//   let closest: BRWFTYPE;
+//   for (let i = 0; i++; i < brs.length) {}
+// };
 
 export { search, get, getSchoolData, findClosest };

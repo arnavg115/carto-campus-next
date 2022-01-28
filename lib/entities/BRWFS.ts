@@ -1,24 +1,27 @@
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
 
-const brwfSchema = new mongoose.Model({
-  school: String,
-  coord: [Number],
-  type: String,
-});
+// const brwfSchema = new mongoose.Model({
+//   school: String,
+//   coord: [Number],
+//   type: String,
+// });
 
-let BRWF: mongoose.Model<any, {}, {}, {}>;
+// let BRWF: mongoose.Model<any, {}, {}, {}>;
 
-try {
-  BRWF = mongoose.model("br-wfs", brwfSchema);
-} catch (e) {
-  BRWF = mongoose.model("br-wfs");
-}
+// try {
+//   BRWF = mongoose.model("br-wfs", brwfSchema);
+// } catch (e) {
+//   BRWF = mongoose.model("br-wfs");
+// }
 
-interface BRWFTYPE {
-  school: string;
-  coord: number[];
-  type: string;
-}
+// interface BRWFTYPE {
+//   school: string;
+//   coord: number[];
+//   type: string;
+// }
 
-// @ts-ignore
-export { BRWF, BRWFTYPE };
+// // @ts-ignore
+// export { BRWF, BRWFTYPE };
+
+const y = "";
+export { y };
