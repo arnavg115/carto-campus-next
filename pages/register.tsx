@@ -1,37 +1,48 @@
 import firebase from "firebase";
 import { Button, TextInput } from "grommet";
 import { withAuthUser, AuthAction } from "next-firebase-auth";
+import "react-toastify/dist/ReactToastify.css";
 import React from "react";
 import { AuthBox } from "../components/AuthBox";
 import CartoLoader from "../components/CartoLoader";
 import NextLink from "../components/Link";
 import { PasswordInput } from "../components/PasswordInput";
-import { colors } from "../lib/Constants";
 import { useField } from "../lib/hooks";
+import { toast, ToastContainer } from "react-toastify";
 
 const RegisterPage = () => {
   const [email, setEmail] = useField("");
   const [password, setPassword] = useField("");
   const [passwordConf, setPasswordConf] = useField("");
+
+  const error = (msg: string) => {
+    toast.error(msg, {
+      position: "top-left",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      progress: undefined,
+      theme: "dark",
+    });
+  };
+
   const Register = async () => {
     const sub = email.split("@");
     if (sub.length === 2) {
       if (passwordConf !== password) {
-        console.log("Nomatch");
-
-        alert("Passwords do not match");
+        error("Passwords do not match");
       } else if (sub[1] === "pleasantonusd.net") {
         try {
           await firebase.auth().createUserWithEmailAndPassword(email, password);
         } catch (err) {
           const i: any = err;
-          alert(i.code.split("/")[1]);
+          error(i.message);
         }
       } else {
-        alert("Email must be a pleasantonusd email.");
+        error("Email must be a pleasantonusd email.");
       }
     } else {
-      alert("Invalid email");
+      error("Invalid email");
     }
   };
 
@@ -62,6 +73,14 @@ const RegisterPage = () => {
         Already have an account? <NextLink href="/login" text="Login" />{" "}
         instead.
       </p>
+      <ToastContainer
+        position="top-left"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+      />
     </AuthBox>
   );
 };

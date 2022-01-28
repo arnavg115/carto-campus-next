@@ -1,8 +1,8 @@
 import firebase from "firebase";
 import { Button, TextInput } from "grommet";
 import { withAuthUser, AuthAction } from "next-firebase-auth";
-import Link from "next/link";
-import { useState } from "react";
+import "react-toastify/dist/ReactToastify.css";
+import { toast, ToastContainer } from "react-toastify";
 import { AuthBox } from "../components/AuthBox";
 import CartoLoader from "../components/CartoLoader";
 import NextLink from "../components/Link";
@@ -14,7 +14,13 @@ const LoginPage = () => {
     try {
       await firebase.auth().signInWithEmailAndPassword(email, password);
     } catch (e: any) {
-      alert(e.message);
+      toast.error(e.message, {
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        progress: undefined,
+        theme: "dark",
+      });
     }
   };
   const [email, setEmail] = useField("");
@@ -42,6 +48,13 @@ const LoginPage = () => {
           Forgot your password? <NextLink href="/forgot" text="Reset" /> it.
         </p>
       </div>
+      <ToastContainer
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+      />
     </AuthBox>
   );
 };

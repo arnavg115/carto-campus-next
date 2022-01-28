@@ -12,6 +12,7 @@ import { State } from "../lib/redux";
 import DirBox from "./DirBox";
 import MapInput from "./MapInput";
 import SchoolPicker from "./SchoolPicker";
+import { toast } from "react-toastify";
 
 interface MapProps {
   init: RoomType[];
@@ -78,7 +79,10 @@ const Map: FC<MapProps> = ({ init, school, schools, prefs, Auth }) => {
     reset(false);
     setOpen(false);
     if (origin === "" || dest === "") {
-      alert("Please enter origin and destination");
+      toast.error("Please enter origin and destination", {
+        theme: "dark",
+      });
+      throw new Error("");
       return;
     }
     const or = await get(state.school, origin);
@@ -174,6 +178,7 @@ const Map: FC<MapProps> = ({ init, school, schools, prefs, Auth }) => {
         "line-opacity": 0.75,
       },
     });
+    console.log({ ori: or.name, dsti: dst.name });
     return { ori: or.name, dsti: dst.name };
   };
   return (

@@ -11,10 +11,15 @@ import { useSelector } from "react-redux";
 import { State } from "../lib/redux";
 import DashModal from "./DashModal";
 import { server } from "../lib/config";
+import { toast } from "react-toastify";
 interface MapInputProps {
   map: React.MutableRefObject<mapboxgl.Map | null>;
   initSuggestion: RoomType[];
-  nav: (origin: string, dest: string, reset: (fly: boolean) => void) => any;
+  nav: (
+    origin: string,
+    dest: string,
+    reset: (fly: boolean) => void
+  ) => Promise<any>;
   resetDashboard: () => void;
   navOn: boolean;
   auth: AuthUserContext;
@@ -146,12 +151,19 @@ const MapInput: FC<MapInputProps> = ({
       <Button
         icon={<Launch />}
         primary
+        disabled={
+          origin === "" ||
+          dest === "" ||
+          origin.toLowerCase() === dest.toLowerCase()
+        }
         color={"black"}
         onClick={async () => {
-          const out = await nav(origin, dest, reset);
-          console.log(out);
-          setOrigin(out.ori as string);
-          setDest(out.dsti as string);
+          try {
+            const out: any = await nav(origin, dest, reset);
+            // console.log(out.ori);
+            setOrigin(out.ori as string);
+            setDest(out.dsti as string);
+          } catch {}
         }}
       />
       <div
@@ -175,28 +187,42 @@ const MapInput: FC<MapInputProps> = ({
         primary
         color={"white"}
         disabled={!navOn}
-        onClick={async () => {
-          const doc = firebase
-            .firestore()
-            .collection("users")
-            .doc(auth.id!)
-            .collection("routes");
-          const data = await doc
-            .where("origin", "==", origin)
-            .where("dest", "==", dest)
-            .get();
-          if (!data.empty) {
-            alert("Route already saved");
-            return;
-          }
-          await doc.add({
-            origin: origin,
-            dest: dest,
-            time: Date.now(),
-            school: state.school,
-            distance: distance,
-          });
-          alert("Route saved!");
+        onClick={() => {
+          toast.promise(
+            async () => {
+              const doc = firebase
+                .firestore()
+                .collection("users")
+                .doc(auth.id!)
+                .collection("routes");
+              const data = await doc
+                .where("origin", "==", origin)
+                .where("dest", "==", dest)
+                .get();
+              if (!data.empty) {
+                throw new Error("Already Saved");
+              }
+              await doc.add({
+                origin: origin,
+                dest: dest,
+                time: Date.now(),
+                school: state.school,
+                distance: distance,
+              });
+            },
+            {
+              error: {
+                render({ data }: { data: Error }) {
+                  return `Error: ${data.message}`;
+                },
+              },
+              success: "Saved",
+              pending: "Saving",
+            },
+            {
+              theme: "dark",
+            }
+          );
         }}
       />
     </div>

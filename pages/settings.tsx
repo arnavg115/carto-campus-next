@@ -8,13 +8,14 @@ import {
 } from "next-firebase-auth";
 import { Down } from "grommet-icons";
 import { initializeApollo } from "../lib/apollo";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useState } from "react";
 import NextLink from "../components/Link";
 import { NonMapPage } from "../components/NonMapPage";
 import { gql } from "@apollo/client";
 import { Box, Button, Select } from "grommet";
 import { Prefs, school } from "../lib/clientTypes";
 import { useRouter } from "next/router";
+import { toast, ToastContainer } from "react-toastify";
 
 interface SettingsProps {
   school: school;
@@ -53,8 +54,6 @@ const Settings: FC<SettingsProps> = (props) => {
       units,
       school: data.getSchoolByName._id,
     });
-    alert("Saved");
-    router.push("/dashboard");
   };
   if (!auth.emailVerified) {
     return (
@@ -95,11 +94,20 @@ const Settings: FC<SettingsProps> = (props) => {
             }}
             primary
             onClick={() => {
-              save();
+              toast.promise(save, {
+                pending: "Loading",
+                success: "Settings Saved Successfully",
+                error: {
+                  render({ data }: { data: Error }) {
+                    return `Error: ${data.message}`;
+                  },
+                },
+              });
             }}
           />
         </Box>
       </Box>
+      <ToastContainer theme="dark" />
     </NonMapPage>
   );
 };

@@ -8,6 +8,7 @@ const typeDefs = gql`
     getSchool(id: String!): School!
     getSchools: [School!]!
     getSchoolByName(name: String!, zip: Int!): School!
+    getClosestBR(coord: [Float!]!, id: String!): Room!
   }
   type School {
     _id: String!

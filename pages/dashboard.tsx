@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import "mapbox-gl/dist/mapbox-gl.css";
+import "react-toastify/dist/ReactToastify.css";
 import {
   AuthAction,
   getFirebaseAdmin,
@@ -17,6 +18,7 @@ import { initializeApollo } from "../lib/apollo";
 
 import { Prefs, school, RoomType } from "../lib/clientTypes";
 import Map from "../components/Map";
+import { ToastContainer } from "react-toastify";
 
 interface DashboardProps {
   init: RoomType[];
@@ -49,6 +51,13 @@ const DashboardPage: FC<DashboardProps> = ({
         init={init}
         school={school}
         schools={schools}
+      />
+      <ToastContainer
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
       />
     </CartoPage>
   );

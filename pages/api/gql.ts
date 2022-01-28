@@ -1,7 +1,7 @@
 import { ApolloServer, gql } from "apollo-server-micro";
 import { NextApiRequest, NextApiResponse } from "next";
 import mongoose from "mongoose";
-import { School, utils, typeDefs } from "../../lib/barrel";
+import { School, utils, typeDefs, Room } from "../../lib/barrel";
 import initAuth from "../../lib/initFirebase";
 // import { verifyIdToken } from "next-firebase-auth";
 
@@ -40,6 +40,14 @@ const resolvers = {
     ) {
       const data = await School.findOne({ name, zip });
       return data;
+    },
+    async getClosestBR(
+      parent: any,
+      { coord }: { coord: number[]; id: string }
+    ) {
+      return {
+        name: "S",
+      };
     },
   },
 };
