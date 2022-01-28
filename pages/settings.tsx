@@ -8,6 +8,7 @@ import {
 } from "next-firebase-auth";
 import { Down } from "grommet-icons";
 import { initializeApollo } from "../lib/apollo";
+import "react-toastify/dist/ReactToastify.css";
 import React, { FC, useState } from "react";
 import NextLink from "../components/Link";
 import { NonMapPage } from "../components/NonMapPage";
