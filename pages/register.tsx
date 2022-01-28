@@ -17,7 +17,6 @@ const RegisterPage = () => {
 
   const error = (msg: string) => {
     toast.error(msg, {
-      position: "top-left",
       autoClose: 5000,
       hideProgressBar: false,
       closeOnClick: true,
