@@ -1,9 +1,8 @@
-import { ApolloServer, gql } from "apollo-server-micro";
+import { ApolloServer } from "apollo-server-micro";
 import { NextApiRequest, NextApiResponse } from "next";
 import mongoose from "mongoose";
-import { School, utils, typeDefs, Room } from "../../lib/barrel";
+import { School, utils, typeDefs } from "../../lib/barrel";
 import initAuth from "../../lib/initFirebase";
-// import { verifyIdToken } from "next-firebase-auth";
 
 mongoose.connect(process.env.MONGO!);
 
@@ -43,11 +42,11 @@ const resolvers = {
     },
     async getClosestBR(
       parent: any,
-      { coord }: { coord: number[]; id: string }
+      { coord, id, type }: { coord: number[]; id: string; type: string }
     ) {
-      return {
-        name: "S",
-      };
+      const res = await utils.getSchoolBR(id, coord, type);
+
+      return res;
     },
   },
 };
@@ -55,7 +54,10 @@ const resolvers = {
 const server = new ApolloServer({
   typeDefs: typeDefs,
   resolvers: resolvers,
-  context: ({ req, res }) => ({ req, res }),
+  context: ({ req, res }: { req: NextApiRequest; res: NextApiResponse }) => ({
+    req,
+    res,
+  }),
 });
 const startServer = server.start();
 initAuth();

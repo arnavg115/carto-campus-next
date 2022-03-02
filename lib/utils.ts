@@ -1,6 +1,6 @@
 import { extract, FuzzballExtractOptions, partial_ratio } from "fuzzball";
 
-import { Room, RoomType, School } from "./barrel";
+import { BRWF, BRWFTYPE, Room, RoomType, School } from "./barrel";
 
 const options: FuzzballExtractOptions = {
   scorer: partial_ratio,
@@ -55,14 +55,32 @@ const getSchoolData = async (id: string) => {
   return data;
 };
 
-// const getSchoolBR = async (id: string, coord: number[]) => {
-//   const res = await School.findOne({ _id: id });
-//   if (!res) {
-//     throw new Error("Not Found");
-//   }
-//   const brs = (await BRWF.find({ school: res.id })) as BRWFTYPE[];
-//   let closest: BRWFTYPE;
-//   for (let i = 0; i++; i < brs.length) {}
-// };
+const euclidean = (coord1: number[], coord2: number[]) => {
+  return Math.sqrt(
+    Math.pow(coord1[0] - coord2[0], 2) + Math.pow(coord1[1] - coord2[1], 2)
+  );
+};
 
-export { search, get, getSchoolData, findClosest };
+const getSchoolBR = async (id: string, coord: number[], type: string) => {
+  const res = await School.findOne({ _id: id });
+  // console.log(res.brwf);
+  if (!res || !res.brwf) {
+    throw new Error("Not Found");
+  }
+
+  const brs = (await BRWF.find({ school: res.id, type })) as BRWFTYPE[];
+
+  let closest: BRWFTYPE = brs[0];
+  let min = Infinity;
+  for (const iterator of brs) {
+    const dist = euclidean(coord, iterator.coord);
+    if (min > dist) {
+      closest = iterator;
+      min = dist;
+    }
+  }
+  return closest;
+};
+
+export { search, get, getSchoolData, findClosest, getSchoolBR };
+``;

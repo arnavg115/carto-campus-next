@@ -8,7 +8,7 @@ const typeDefs = gql`
     getSchool(id: String!): School!
     getSchools: [School!]!
     getSchoolByName(name: String!, zip: Int!): School!
-    getClosestBR(coord: [Float!]!, id: String!): Room!
+    getClosestBR(coord: [Float!]!, id: String!, type: String!): BRWF!
   }
   type School {
     _id: String!
@@ -16,6 +16,7 @@ const typeDefs = gql`
     coord: [Float!]!
     rooms: [String!]!
     zip: Int!
+    brwf: Boolean!
   }
   type Room {
     _id: String!
@@ -24,6 +25,12 @@ const typeDefs = gql`
     coord: [Float!]!
     building: String!
     rnum: String!
+  }
+  type BRWF {
+    _id: String!
+    type: String!
+    school: String!
+    coord: [Float!]!
   }
 `;
 

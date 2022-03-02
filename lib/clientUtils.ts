@@ -17,6 +17,18 @@ const getCoordQuery = gql`
     }
   }
 `;
+
+const brwfQuery = gql`
+  query Query($coord: [Float!]!, $id: String!, $type: String!) {
+    getClosestBR(coord: $coord, id: $id, type: $type) {
+      _id
+      coord
+      type
+      school
+    }
+  }
+`;
+
 async function search(id: string, query: string) {
   const apolloClient = initializeApollo();
   const { data } = await apolloClient.query({
@@ -48,6 +60,20 @@ async function getRoute(or: number[], dest: number[]) {
   const data = await res.json();
   return data.routes[0];
 }
+
+async function getBrWf(e: GeolocationPosition, id: string, type: string) {
+  const apolloClient = initializeApollo();
+  const { data } = await apolloClient.query({
+    query: brwfQuery,
+    variables: {
+      coord: [e.coords.longitude, e.coords.latitude],
+      id,
+      type,
+    },
+  });
+  return data;
+}
+
 function midpoint(or: number[], dest: number[]): [number, number] {
   const x = (or[0] + dest[0]) / 2;
   const y = (or[1] + dest[1]) / 2;
@@ -57,4 +83,4 @@ function meterstoft(m: number) {
   return m * 3.28084;
 }
 
-export { search, get, getRoute, midpoint, meterstoft };
+export { search, get, getRoute, midpoint, meterstoft, getBrWf };

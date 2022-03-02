@@ -4,6 +4,7 @@ const SchoolSchema = new mongoose.Schema({
   coord: [Number],
   rooms: [String],
   zip: Number,
+  brwf: Boolean,
 });
 
 let School: mongoose.Model<any, {}, {}, {}>;

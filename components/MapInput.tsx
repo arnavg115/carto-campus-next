@@ -12,6 +12,9 @@ import { State } from "../lib/redux";
 import DashModal from "./DashModal";
 import { server } from "../lib/config";
 import { toast } from "react-toastify";
+import { BiBath, BiWater } from "react-icons/bi";
+import { gql } from "@apollo/client";
+
 interface MapInputProps {
   map: React.MutableRefObject<mapboxgl.Map | null>;
   initSuggestion: RoomType[];
@@ -114,43 +117,49 @@ const MapInput: FC<MapInputProps> = ({
           setModalOpen(false);
         }}
       />
-      <TextInput
-        style={{ backgroundColor: "white" }}
-        placeholder="Starting Point"
-        onChange={async (e) => {
-          setOrigin(e.target.value);
-          const suggestions = await search(state.school, e.target.value);
-          setORS(suggestions);
-        }}
-        value={origin}
-        suggestions={orS.map((s) => s.name)}
-        onSelect={(s) => {
-          setOrigin(s.suggestion);
-        }}
-      />
+      <div style={{ gridArea: "start" }}>
+        <TextInput
+          style={{ backgroundColor: "white", gridArea: "start" }}
+          placeholder="Starting Point"
+          onChange={async (e) => {
+            setOrigin(e.target.value);
+            const suggestions = await search(state.school, e.target.value);
+            setORS(suggestions);
+          }}
+          value={origin}
+          suggestions={orS.map((s) => s.name)}
+          onSelect={(s) => {
+            setOrigin(s.suggestion);
+          }}
+        />
+      </div>
       <Button
         icon={<Refresh color="#ffffff" />}
+        style={{ gridArea: "refresh", width: "48px" }}
         primary
         color={"red"}
         onClick={() => reset(true)}
       />
-      <TextInput
-        style={{ backgroundColor: "white" }}
-        placeholder="Destination"
-        onChange={async (e) => {
-          setDest(e.target.value);
-          const suggestions = await search(state.school, e.target.value);
-          setDestS(suggestions);
-        }}
-        suggestions={destS.map((s) => s.name)}
-        onSelect={(e) => {
-          setDest(e.suggestion);
-        }}
-        value={dest}
-      />
+      <div style={{ gridArea: "dest" }}>
+        <TextInput
+          style={{ backgroundColor: "white" }}
+          placeholder="Destination"
+          onChange={async (e) => {
+            setDest(e.target.value);
+            const suggestions = await search(state.school, e.target.value);
+            setDestS(suggestions);
+          }}
+          suggestions={destS.map((s) => s.name)}
+          onSelect={(e) => {
+            setDest(e.suggestion);
+          }}
+          value={dest}
+        />
+      </div>
       <Button
         icon={<Launch />}
         primary
+        style={{ gridArea: "launch", width: "48px" }}
         disabled={
           origin === "" ||
           dest === "" ||
@@ -166,26 +175,21 @@ const MapInput: FC<MapInputProps> = ({
           } catch {}
         }}
       />
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row-reverse",
+
+      <Button
+        primary
+        icon={<History color="white" />}
+        style={{ width: "48px", gridArea: "history" }}
+        onClick={() => {
+          fetchSaved();
+          setModalOpen(true);
         }}
-      >
-        <Button
-          primary
-          icon={<History color="white" />}
-          style={{ width: "48px" }}
-          onClick={() => {
-            fetchSaved();
-            setModalOpen(true);
-          }}
-        />
-      </div>
+      />
       <Button
         icon={<Save />}
         primary
         color={"white"}
+        style={{ gridArea: "save", width: "48px" }}
         disabled={!navOn}
         onClick={() => {
           toast.promise(
@@ -224,6 +228,21 @@ const MapInput: FC<MapInputProps> = ({
             }
           );
         }}
+      />
+      <Button
+        primary
+        icon={<BiBath color="white" size="small" />}
+        style={{ width: "48px", gridArea: "wf" }}
+        onClick={() => {
+          navigator.geolocation.getCurrentPosition((e) => {});
+        }}
+      />
+      <Button
+        primary
+        color="black"
+        icon={<BiWater color="white" size="small" />}
+        style={{ width: "48px", gridArea: "br" }}
+        onClick={() => {}}
       />
     </div>
   );
