@@ -39,7 +39,7 @@ const DashboardPage: FC<DashboardProps> = ({
     if (!Auth.emailVerified) {
       router.push("/verify");
     } else {
-      dispatch(SetSchool(prefs.school));
+      dispatch(SetSchool({ school: school._id, brwf: school.brwf }));
     }
   }, []);
 
@@ -108,6 +108,7 @@ export const getServerSideProps = withAuthUserTokenSSR()(
           zip
           name
           coord
+          brwf
         }
       }
     `;

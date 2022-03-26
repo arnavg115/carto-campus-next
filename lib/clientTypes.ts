@@ -4,6 +4,7 @@ export interface school {
   name: string;
   coord: number[];
   rooms: string[];
+  brwf: boolean;
 }
 
 export interface RoomType {
@@ -17,4 +18,5 @@ export interface RoomType {
 export interface Prefs {
   units: string;
   school: string;
+  brwf: boolean;
 }

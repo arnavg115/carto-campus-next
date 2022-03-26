@@ -1,6 +1,6 @@
 import { SETSCHOOL } from "./actionTypes";
 
-const SetSchool = (payload: string) => ({
+const SetSchool = (payload: { brwf?: boolean; school?: string }) => ({
   type: SETSCHOOL,
   payload,
 });

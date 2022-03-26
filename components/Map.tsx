@@ -7,7 +7,14 @@ import "@watergis/mapbox-gl-print/css/styles.css";
 import { useSelector } from "react-redux";
 import { initializeApollo } from "../lib/apollo";
 import { Prefs, RoomType, school } from "../lib/clientTypes";
-import { get, getRoute, midpoint } from "../lib/clientUtils";
+import {
+  addDot,
+  addLine,
+  get,
+  getBrWf,
+  getRoute,
+  midpoint,
+} from "../lib/clientUtils";
 import { State } from "../lib/redux";
 import DirBox from "./DirBox";
 import MapInput from "./MapInput";
@@ -71,6 +78,37 @@ const Map: FC<MapProps> = ({ init, school, schools, prefs, Auth }) => {
   const resetParent = () => {
     setDir(null);
   };
+
+  const navTo = async (dest: number[], or: number[], mapinpt: mapboxgl.Map) => {
+    addDot(mapinpt, dest, "black", "end");
+    addDot(mapinpt, or, "red", "start");
+    const res = await getRoute(or, dest);
+    setDir(res);
+    const route = res.geometry.coordinates;
+    const geojsn: any = {
+      type: "Feature",
+      properties: {},
+      geometry: {
+        type: "LineString",
+        coordinates: route,
+      },
+    };
+    const zoom =
+      res.distance > 270
+        ? -0.007 * (res.distance - 270) + 16.75
+        : -0.003 * (res.distance - 270) + 18;
+    // console.log(zoom);
+
+    mapinpt.flyTo({
+      center: midpoint(or, dest),
+      zoom: zoom,
+    });
+    addLine(mapinpt, geojsn);
+  };
+  const navBRWF = async (loc: GeolocationPosition, t: "br" | "wf") => {
+    const res = await getBrWf(loc, state.school, t);
+    navTo(res.coord, [loc.coords.longitude, loc.coords.latitude], map.current!);
+  };
   const nav = async (
     origin: string,
     dest: string,
@@ -87,98 +125,7 @@ const Map: FC<MapProps> = ({ init, school, schools, prefs, Auth }) => {
     }
     const or = await get(state.school, origin);
     const dst = await get(state.school, dest);
-    console.log(or.name);
-    map.current!.addLayer({
-      id: "start",
-      type: "circle",
-      source: {
-        type: "geojson",
-        data: {
-          type: "FeatureCollection",
-          features: [
-            {
-              type: "Feature",
-              properties: {},
-              geometry: {
-                type: "Point",
-                coordinates: or.coord,
-              },
-            },
-          ],
-        },
-      },
-      paint: {
-        "circle-radius": 10,
-        "circle-color": "red",
-      },
-    });
-    map.current!.addLayer({
-      id: "end",
-      type: "circle",
-      source: {
-        type: "geojson",
-        data: {
-          type: "FeatureCollection",
-          features: [
-            {
-              type: "Feature",
-              properties: {},
-              geometry: {
-                type: "Point",
-                coordinates: dst.coord,
-              },
-            },
-          ],
-        },
-      },
-      paint: {
-        "circle-radius": 10,
-        "circle-color": "black",
-      },
-    });
-
-    const res = await getRoute(or.coord, dst.coord);
-    setDir(res);
-
-    const route = res.geometry.coordinates;
-
-    const geojsn: any = {
-      type: "Feature",
-      properties: {},
-      geometry: {
-        type: "LineString",
-        coordinates: route,
-      },
-    };
-    const zoom =
-      res.distance > 270
-        ? -0.007 * (res.distance - 270) + 16.75
-        : -0.003 * (res.distance - 270) + 18;
-    console.log(zoom);
-
-    map.current!.flyTo({
-      center: midpoint(or.coord, dst.coord),
-      zoom: zoom,
-    });
-    // console.log(res);
-    map.current!.addLayer({
-      id: "route",
-      type: "line",
-      source: {
-        type: "geojson",
-        data: geojsn,
-      },
-      layout: {
-        "line-join": "round",
-        "line-cap": "round",
-      },
-      paint: {
-        "line-color": "#3887be",
-        "line-width": 5,
-        "line-opacity": 0.75,
-      },
-    });
-    console.log({ ori: or.name, dsti: dst.name });
+    navTo(dst.coord, or.coord, map.current!);
     return { ori: or.name, dsti: dst.name };
   };
   return (
@@ -193,6 +140,7 @@ const Map: FC<MapProps> = ({ init, school, schools, prefs, Auth }) => {
         resetDashboard={resetParent}
         navOn={!!dir}
         cent={cent}
+        navBRWF={navBRWF}
       />
       <SchoolPicker initSchool={school} schools={schools} />
       <div ref={mapContainer} style={{ height: "100%", width: "100%" }}></div>

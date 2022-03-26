@@ -13,7 +13,6 @@ import DashModal from "./DashModal";
 import { server } from "../lib/config";
 import { toast } from "react-toastify";
 import { BiBath, BiWater } from "react-icons/bi";
-import { gql } from "@apollo/client";
 
 interface MapInputProps {
   map: React.MutableRefObject<mapboxgl.Map | null>;
@@ -29,6 +28,7 @@ interface MapInputProps {
   distance: number;
   metric: boolean;
   cent: number[];
+  navBRWF: (loc: GeolocationPosition, t: "br" | "wf") => Promise<any>;
 }
 
 const MapInput: FC<MapInputProps> = ({
@@ -41,6 +41,7 @@ const MapInput: FC<MapInputProps> = ({
   metric,
   distance,
   cent,
+  navBRWF,
 }) => {
   const state = useSelector<State, State>((state) => state);
   const [saved, setSaved] = useState<any[]>([]);
@@ -51,6 +52,7 @@ const MapInput: FC<MapInputProps> = ({
   const [loading, setLoading] = useState(true);
 
   const [destS, setDestS] = useState<RoomType[]>(initSuggestion);
+
   useEffect(() => {
     handleChange();
   }, [state]);
@@ -163,7 +165,10 @@ const MapInput: FC<MapInputProps> = ({
         disabled={
           origin === "" ||
           dest === "" ||
-          origin.toLowerCase() === dest.toLowerCase()
+          origin.toLowerCase() === dest.toLowerCase() ||
+          origin == "Your Location" ||
+          dest === "Bathroom" ||
+          dest === "Water Fountain"
         }
         color={"black"}
         onClick={async () => {
@@ -229,20 +234,54 @@ const MapInput: FC<MapInputProps> = ({
           );
         }}
       />
+
       <Button
         primary
         icon={<BiBath color="white" size="small" />}
         style={{ width: "48px", gridArea: "wf" }}
+        disabled={!state.brwf}
         onClick={() => {
-          navigator.geolocation.getCurrentPosition((e) => {});
+          navigator.geolocation.getCurrentPosition(
+            async (e) => {
+              await navBRWF(e, "br");
+              setOrigin("Your Location");
+              setDest("Bathroom");
+            },
+            () =>
+              toast(
+                "Location permission is not granted. Please grant it, to use this feature.",
+                {
+                  theme: "dark",
+                  type: "error",
+                }
+              )
+          );
         }}
       />
       <Button
         primary
         color="black"
+        disabled={!state.brwf}
         icon={<BiWater color="white" size="small" />}
         style={{ width: "48px", gridArea: "br" }}
-        onClick={() => {}}
+        onClick={() => {
+          navigator.geolocation.getCurrentPosition(
+            async (e) => {
+              await navBRWF(e, "wf");
+              setOrigin("Your Location");
+              setDest("Water Fountain");
+            },
+            () => {
+              toast(
+                "Location permission is not granted. Please grant it, to use this feature.",
+                {
+                  theme: "dark",
+                  type: "error",
+                }
+              );
+            }
+          );
+        }}
       />
     </div>
   );

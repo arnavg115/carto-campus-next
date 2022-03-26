@@ -27,6 +27,7 @@ const SchoolPicker: FC<SchoolProps> = ({ initSchool, schools }) => {
             query Query($name: String!, $zip: Int!) {
               getSchoolByName(name: $name, zip: $zip) {
                 _id
+                brwf
               }
             }
           `;
@@ -38,7 +39,12 @@ const SchoolPicker: FC<SchoolProps> = ({ initSchool, schools }) => {
               zip: parseInt(option.split(":")[1]),
             },
           });
-          dispatch(SetSchool(data.getSchoolByName._id));
+          dispatch(
+            SetSchool({
+              school: data.getSchoolByName._id,
+              brwf: data.getSchoolByName.brwf,
+            })
+          );
         }}
         options={schools.map((s) => `${s.name}:${s.zip}`)}
       />
