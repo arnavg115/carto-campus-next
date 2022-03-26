@@ -94,7 +94,7 @@ export const getServerSideProps = withAuthUserTokenSSR()(
         },
       };
     }
-    console.log(doc.data()!.school);
+    // console.log(doc.data()!.school);
     // store.dispatch({ type: SETSCHOOL, payload: doc.data()!.school });
     const query = gql`
       query Query($id: String!) {
@@ -119,7 +119,7 @@ export const getServerSideProps = withAuthUserTokenSSR()(
         id: doc.data()!.school,
       },
     });
-
+    console.log(server);
     const response = await fetch(
       `${server}/api/init?id=${doc.data()!.school}`,
       {
