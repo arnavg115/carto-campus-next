@@ -4,7 +4,7 @@ Next gen carto-campus powered by nextjs and deployed on vercel.
 
 ## Uses the following technologies
 - SSR for fast page loads
-- Fireabse for secure auth and user data storage
+- Firebase for secure auth and user data storage
 - mongodb for school data
 - mapbox for maps and navigation
 - graphql for easy api fetching
@@ -14,9 +14,11 @@ Next gen carto-campus powered by nextjs and deployed on vercel.
 - [X] Finish gql api
 - [X] add navigation
 - [X] finish user profile fetching
-- [ ] implement multiple schools
+- [X] implement multiple schools
 - [ ] add br/wf support
-- [ ] optimize for mobile
+- [X] optimize for mobile
+- [ ] add club discovery feature
+- [ ] figure out evac sys
 
 ## Run code locally
 1. Clone the repo and cd into the folder
