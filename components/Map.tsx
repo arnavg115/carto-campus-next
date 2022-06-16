@@ -2,8 +2,6 @@ import { gql } from "@apollo/client";
 import mapboxgl, { LngLatLike } from "mapbox-gl";
 import { AuthUserContext } from "next-firebase-auth";
 import React, { FC, useEffect, useRef, useState } from "react";
-import MapboxPrintControl from "@watergis/mapbox-gl-print";
-import "@watergis/mapbox-gl-print/css/styles.css";
 import { useSelector } from "react-redux";
 import { initializeApollo } from "../lib/apollo";
 import { Prefs, RoomType, school } from "../lib/clientTypes";
@@ -131,7 +129,7 @@ const Map: FC<MapProps> = ({ init, school, schools, prefs, Auth }) => {
   return (
     <div style={{ height: "100%", width: "100%" }}>
       <MapInput
-        metric={prefs.units === "metric"}
+        metric={!!prefs.units ? prefs.units === "metric" : true}
         distance={dir ? dir.distance : 0}
         auth={Auth}
         map={map}

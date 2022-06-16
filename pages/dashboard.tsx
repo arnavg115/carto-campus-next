@@ -35,6 +35,7 @@ const DashboardPage: FC<DashboardProps> = ({
   const Auth = useAuthUser();
   const router = useRouter();
   const dispatch = useDispatch();
+
   useEffect(() => {
     if (!Auth.emailVerified) {
       router.push("/verify");
@@ -42,15 +43,22 @@ const DashboardPage: FC<DashboardProps> = ({
       dispatch(SetSchool({ school: school._id, brwf: school.brwf }));
     }
   }, []);
-
+  // console.log(prefs);
+  const prefss: Prefs = !prefs
+    ? { units: "metric", school: "", brwf: false }
+    : prefs;
+  const schoolss: school[] = !schools ? [] : schools;
+  const schoold: school = !school
+    ? { zip: "", _id: "", coord: [], name: "", brwf: false, rooms: [] }
+    : school;
   return (
     <CartoPage auth={Auth} landing={false} open={false}>
       <Map
         Auth={Auth}
-        prefs={prefs}
+        prefs={prefss}
         init={init}
-        school={school}
-        schools={schools}
+        school={schoold}
+        schools={schoolss}
       />
       <ToastContainer
         autoClose={5000}
@@ -65,6 +73,7 @@ const DashboardPage: FC<DashboardProps> = ({
 
 export const getServerSideProps = withAuthUserTokenSSR()(
   async ({ AuthUser }) => {
+    console.log(AuthUser);
     if (!AuthUser.emailVerified) {
       return {
         props: {
@@ -74,6 +83,10 @@ export const getServerSideProps = withAuthUserTokenSSR()(
             prefs: {
               units: "metric",
             },
+          },
+          redirect: {
+            permanent: false,
+            destination: "/",
           },
         },
       };
@@ -90,6 +103,10 @@ export const getServerSideProps = withAuthUserTokenSSR()(
           init: [],
           prefs: {
             units: "metric",
+          },
+          redirect: {
+            permanent: false,
+            destination: "/",
           },
         },
       };
@@ -119,7 +136,7 @@ export const getServerSideProps = withAuthUserTokenSSR()(
         id: doc.data()!.school,
       },
     });
-    console.log(server);
+    // console.log(server);
     const response = await fetch(
       `${server}/api/init?id=${doc.data()!.school}`,
       {
@@ -143,5 +160,6 @@ export const getServerSideProps = withAuthUserTokenSSR()(
 
 export default withAuthUser({
   whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN,
+
   // @ts-ignore
 })(DashboardPage);
