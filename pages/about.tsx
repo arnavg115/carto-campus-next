@@ -55,11 +55,9 @@ function About(props: any) {
     </CartoPage>
   );
 }
-export const getServerSideProps = withAuthUserTokenSSR()(
-  async ({ AuthUser, req }) => {
-    const cookies = parseCookies(req);
-    return { props: { open: cookies.open !== "false" } };
-  }
-);
+export const getStat = withAuthUserTokenSSR()(async ({ AuthUser, req }) => {
+  const cookies = parseCookies(req);
+  return { props: { open: cookies.open !== "false" } };
+});
 
 export default withAuthUser()(About);

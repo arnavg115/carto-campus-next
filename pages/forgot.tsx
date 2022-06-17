@@ -49,7 +49,7 @@ const ForgotPage = () => {
   );
 };
 
-export const getServerSideProps = withAuthUserTokenSSR()();
+// export const getServerSideProps = withAuthUserTokenSSR()();
 
 export default withAuthUser({
   whenAuthed: AuthAction.REDIRECT_TO_APP,
