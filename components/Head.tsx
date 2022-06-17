@@ -8,8 +8,8 @@ const HeadComponent = () => {
       <link
         rel="icon"
         type="image/png"
-        sizes="196x196"
-        href="favicon-196.png"
+        sizes="512x512"
+        href="icon-512x512.png"
       />
       <link rel="apple-touch-icon" href="apple-icon-180.png" />
       <meta name="apple-mobile-web-app-capable" content="yes" />
