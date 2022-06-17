@@ -15,7 +15,6 @@ import { SetSchool } from "../lib/redux";
 import { useDispatch } from "react-redux";
 import { gql } from "@apollo/client";
 import { initializeApollo } from "../lib/apollo";
-
 import { Prefs, school, RoomType } from "../lib/clientTypes";
 import Map from "../components/Map";
 import { ToastContainer } from "react-toastify";
